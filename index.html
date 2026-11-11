@@ -1,0 +1,301 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<meta name="theme-color" content="#151413">
+<title>O Sino</title>
+<link rel="manifest" href="manifest.webmanifest">
+<link rel="icon" href="icon-192.png">
+<link rel="apple-touch-icon" href="icon-180.png">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Newsreader:opsz,wght@6..72,600&family=IBM+Plex+Sans+Condensed:wght@500;600&family=IBM+Plex+Mono:wght@400;500&display=swap">
+<style>
+:root{--papel:#f2eee5;--tinta:#151413;--cinza:#6b655b;--linha:#d9d3c6;--vermelho:#a3201b;--alta:#1e6b3e;--queda:#b0281e;
+--serif:"Newsreader",Georgia,serif;--cond:"IBM Plex Sans Condensed","Arial Narrow",sans-serif;--mono:"IBM Plex Mono",ui-monospace,monospace}
+*{box-sizing:border-box;margin:0;padding:0}
+html,body{background:var(--papel);color:var(--tinta)}
+body{font:500 16px/1.4 var(--cond);padding-bottom:calc(24px + env(safe-area-inset-bottom));max-width:560px;margin:0 auto}
+header{display:flex;align-items:center;justify-content:space-between;padding:calc(14px + env(safe-area-inset-top)) 16px 12px;border-bottom:2px solid var(--tinta)}
+h1{font:600 28px/1 var(--serif);letter-spacing:-.01em}
+h1 b{color:var(--vermelho)}
+.lnk{font:500 13px/1 var(--mono);text-transform:uppercase;letter-spacing:.06em;background:none;border:0;color:var(--tinta);padding:8px 0;cursor:pointer}
+.meta{display:flex;justify-content:space-between;font:400 13px/1 var(--mono);color:var(--cinza);padding:12px 16px;border-bottom:1px solid var(--linha)}
+h2{font:600 13px/1 var(--cond);text-transform:uppercase;letter-spacing:.08em;padding:18px 16px 10px;display:flex;justify-content:space-between;align-items:center}
+h2 span{font:400 12px/1 var(--mono);color:var(--cinza);letter-spacing:0;text-transform:none}
+.carr{display:flex;align-items:flex-start;gap:10px;overflow-x:auto;scroll-snap-type:x mandatory;padding:0 16px 4px;scrollbar-width:none}
+.carr::-webkit-scrollbar{display:none}
+.carr img{flex:0 0 78%;width:78%;min-width:0;height:auto;aspect-ratio:4/5;object-fit:cover;scroll-snap-align:center;background:var(--linha);border:1px solid var(--linha)}
+.story{padding:0 16px}
+.story img{display:block;width:46%;height:auto;aspect-ratio:9/16;object-fit:cover;background:var(--linha);border:1px solid var(--linha)}
+textarea{display:block;width:calc(100% - 32px);margin:0 16px;min-height:220px;font:400 14px/1.5 var(--mono);color:var(--tinta);background:#fff;border:1px solid var(--linha);border-radius:0;padding:10px;resize:vertical}
+textarea:focus,input:focus{outline:2px solid var(--tinta);outline-offset:-1px}
+.opc{display:flex;gap:22px;padding:16px}
+.opc label{display:flex;align-items:center;gap:8px;font:600 15px/1 var(--cond)}
+.opc input{width:20px;height:20px;accent-color:var(--tinta)}
+.btn{display:block;width:calc(100% - 32px);margin:4px 16px 0;padding:16px;font:600 17px/1 var(--cond);letter-spacing:.04em;text-transform:uppercase;background:var(--tinta);color:var(--papel);border:0;border-radius:0;cursor:pointer}
+.btn:disabled{opacity:.45}
+.btn.sec{background:none;color:var(--tinta);border:1.5px solid var(--tinta)}
+#log{font:400 12px/1.6 var(--mono);color:var(--cinza);padding:12px 16px;white-space:pre-wrap;word-break:break-word}
+#log .err{color:var(--queda)}
+#log .ok{color:var(--alta)}
+.pub{margin:16px;padding:14px;border:1.5px solid var(--alta);color:var(--alta);font:600 15px/1.5 var(--cond)}
+.pub a{color:var(--tinta);font:500 13px/1 var(--mono);display:inline-block;margin-top:8px;margin-right:16px}
+.vazio{padding:60px 16px;text-align:center;font:600 22px/1.3 var(--serif);color:var(--cinza)}
+#conta{display:none}
+body.conta #conta{display:block}
+body.conta #ed{display:none}
+.campo{padding:0 16px}
+.campo input{width:100%;font:400 14px/1 var(--mono);padding:12px 10px;border:1px solid var(--linha);background:#fff;border-radius:0}
+.info{font:400 13px/1.7 var(--mono);padding:14px 16px}
+.info .alerta{color:var(--queda)}
+.linha{display:flex;gap:10px;padding:12px 16px 0}
+.linha .btn{margin:0;width:auto;flex:1}
+</style>
+</head>
+<body>
+<header>
+  <h1>O Sino<b>.</b></h1>
+  <button class="lnk" id="bConta">Conta</button>
+</header>
+
+<main id="ed"></main>
+
+<section id="conta">
+  <div class="meta"><span>Conta</span><span id="cUser">—</span></div>
+  <div class="info" id="cInfo"></div>
+  <h2>Token</h2>
+  <div class="campo"><input id="cToken" type="password" autocomplete="off" spellcheck="false" placeholder="IG…"></div>
+  <div class="linha"><button class="btn" id="bSalvar">Salvar</button></div>
+  <div class="linha"><button class="btn sec" id="bRenovar">Renovar</button><button class="btn sec" id="bSair">Sair</button></div>
+  <div id="cLog" class="info"></div>
+</section>
+
+<script>
+const API = 'https://graph.instagram.com';
+const $ = s => document.querySelector(s);
+const LS = {
+  get(k){ try{ return JSON.parse(localStorage.getItem('osino.'+k)); }catch(e){ return null; } },
+  set(k,v){ try{ localStorage.setItem('osino.'+k, JSON.stringify(v)); }catch(e){} }
+};
+const sleep = ms => new Promise(r => setTimeout(r, ms));
+const esc = s => String(s).replace(/[&<>"]/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
+const DIAS = ['Dom','Seg','Ter','Qua','Qui','Sex','Sáb'];
+const fData = iso => { const [a,m,d] = iso.split('-').map(Number); const dt = new Date(a, m-1, d); return `${DIAS[dt.getDay()]} ${String(d).padStart(2,'0')}/${String(m).padStart(2,'0')}/${a}`; };
+const fDia = ms => new Date(ms).toLocaleDateString('pt-BR');
+
+let conta = LS.get('conta');
+let ed = null;
+
+function lerHash(){
+  const h = location.hash.slice(1);
+  if(!h) return null;
+  try{
+    const b = h.replace(/-/g,'+').replace(/_/g,'/');
+    const bin = atob(b);
+    const bytes = Uint8Array.from(bin, c => c.charCodeAt(0));
+    const e = JSON.parse(new TextDecoder().decode(bytes));
+    if(!e.d || !Array.isArray(e.s)) return null;
+    return e;
+  }catch(err){ return null; }
+}
+
+async function call(method, path, params){
+  if(!conta || !conta.token) throw new Error('sem token');
+  const body = new URLSearchParams({...params, access_token: conta.token});
+  let url = API + path; const opt = {method};
+  if(method === 'GET') url += '?' + body; else opt.body = body;
+  const r = await fetch(url, opt);
+  const j = await r.json().catch(() => ({}));
+  if(!r.ok || j.error) throw new Error(j.error ? (j.error.error_user_msg || j.error.message) : 'HTTP ' + r.status);
+  return j;
+}
+
+async function pronto(id){
+  for(let i = 0; i < 45; i++){
+    const j = await call('GET', '/' + id, {fields: 'status_code'});
+    if(j.status_code === 'FINISHED' || j.status_code === 'PUBLISHED') return;
+    if(j.status_code === 'ERROR' || j.status_code === 'EXPIRED') throw new Error('mídia recusada (' + j.status_code + ')');
+    await sleep(2000);
+  }
+  throw new Error('tempo esgotado no processamento');
+}
+
+async function renovar(){
+  const r = await fetch(API + '/refresh_access_token?grant_type=ig_refresh_token&access_token=' + encodeURIComponent(conta.token));
+  const j = await r.json().catch(() => ({}));
+  if(!j.access_token) throw new Error(j.error ? j.error.message : 'falha ao renovar');
+  conta.token = j.access_token;
+  conta.exp = Date.now() + (j.expires_in || 5184000) * 1000;
+  conta.ref = Date.now();
+  LS.set('conta', conta);
+}
+
+function log(msg, cls){
+  const el = $('#log'); if(!el) return;
+  const s = document.createElement('div');
+  if(cls) s.className = cls;
+  s.textContent = msg;
+  el.appendChild(s);
+}
+
+function pubs(){ return LS.get('pub') || {}; }
+
+function render(){
+  const m = $('#ed');
+  if(!ed){ m.innerHTML = '<div class="vazio">Nenhuma edição</div>'; return; }
+  const p = pubs()[ed.d] || {};
+  const tipo = ed.t === 'domingo' ? 'Domingo' : 'Diário';
+  m.innerHTML = `
+    <div class="meta"><span>${fData(ed.d)}</span><span>${tipo}${ed.n ? ' · Nº ' + esc(ed.n) : ''}</span></div>
+    <h2>Carrossel <span>${ed.s.length} slides</span></h2>
+    <div class="carr">${ed.s.map(u => `<img src="${esc(u)}" alt="" loading="lazy">`).join('')}</div>
+    ${ed.st ? `<h2>Story</h2><div class="story"><img src="${esc(ed.st)}" alt=""></div>` : ''}
+    <h2>Legenda <span id="cont"></span></h2>
+    <textarea id="leg" spellcheck="true">${esc(p.legenda || ed.l || '')}</textarea>
+    <div id="pubBox"></div>
+    <div class="opc">
+      <label><input type="checkbox" id="oC" ${p.carrossel ? 'disabled' : 'checked'}> Carrossel</label>
+      ${ed.st ? `<label><input type="checkbox" id="oS" ${p.story ? 'disabled' : 'checked'}> Story</label>` : ''}
+    </div>
+    <button class="btn" id="bPub">Publicar</button>
+    <div id="log"></div>`;
+  const leg = $('#leg');
+  const cont = () => { $('#cont').textContent = leg.value.length + ' / 2200'; };
+  leg.addEventListener('input', cont); cont();
+  $('#bPub').addEventListener('click', publicar);
+  mostrarPub();
+}
+
+function mostrarPub(){
+  const p = pubs()[ed.d] || {};
+  const box = $('#pubBox'); if(!box) return;
+  const itens = [];
+  if(p.carrossel) itens.push(`Carrossel publicado ${p.carrosselEm || ''}${p.link ? `<br><a href="${esc(p.link)}" target="_blank" rel="noopener">Ver post</a>` : ''}`);
+  if(p.story) itens.push(`Story publicado ${p.storyEm || ''}`);
+  box.innerHTML = itens.length ? `<div class="pub">${itens.join('<br>')}</div>` : '';
+  const tudo = p.carrossel && (!ed.st || p.story);
+  const b = $('#bPub'); if(b) b.style.display = tudo ? 'none' : '';
+}
+
+async function publicar(){
+  if(!conta || !conta.token){ abrirConta(); return; }
+  const b = $('#bPub');
+  const querC = $('#oC') && $('#oC').checked && !$('#oC').disabled;
+  const querS = $('#oS') && $('#oS').checked && !$('#oS').disabled;
+  if(!querC && !querS) return;
+  b.disabled = true; $('#log').innerHTML = '';
+  const todos = pubs(); const p = todos[ed.d] || {}; todos[ed.d] = p;
+  const legenda = $('#leg').value.trim();
+  const hora = () => new Date().toLocaleTimeString('pt-BR', {hour:'2-digit', minute:'2-digit'});
+  const ig = conta.id;
+  try{
+    if(querC){
+      let criacao;
+      if(ed.s.length === 1){
+        log('Carrossel: enviando imagem');
+        criacao = (await call('POST', `/${ig}/media`, {image_url: ed.s[0], caption: legenda})).id;
+      }else{
+        const ids = [];
+        for(let i = 0; i < ed.s.length; i++){
+          log(`Carrossel: enviando ${i+1}/${ed.s.length}`);
+          ids.push((await call('POST', `/${ig}/media`, {image_url: ed.s[i], is_carousel_item: 'true'})).id);
+        }
+        log('Carrossel: processando');
+        for(const id of ids) await pronto(id);
+        criacao = (await call('POST', `/${ig}/media`, {media_type: 'CAROUSEL', children: ids.join(','), caption: legenda})).id;
+      }
+      await pronto(criacao);
+      const pub = await call('POST', `/${ig}/media_publish`, {creation_id: criacao});
+      p.carrossel = pub.id; p.carrosselEm = hora(); p.legenda = legenda;
+      try{ p.link = (await call('GET', '/' + pub.id, {fields: 'permalink'})).permalink; }catch(e){}
+      LS.set('pub', todos);
+      log('Carrossel publicado', 'ok');
+    }
+    if(querS){
+      log('Story: enviando');
+      const c = (await call('POST', `/${ig}/media`, {media_type: 'STORIES', image_url: ed.st})).id;
+      await pronto(c);
+      const pub = await call('POST', `/${ig}/media_publish`, {creation_id: c});
+      p.story = pub.id; p.storyEm = hora();
+      LS.set('pub', todos);
+      log('Story publicado', 'ok');
+    }
+    if(!conta.ref || Date.now() - conta.ref > 86400000){ try{ await renovar(); }catch(e){} }
+  }catch(err){
+    log('Erro: ' + err.message, 'err');
+  }
+  b.disabled = false;
+  render();
+}
+
+function abrirConta(){
+  document.body.classList.add('conta');
+  $('#bConta').textContent = 'Voltar';
+  mostrarConta();
+}
+function fecharConta(){
+  document.body.classList.remove('conta');
+  $('#bConta').textContent = 'Conta';
+}
+function mostrarConta(){
+  $('#cToken').value = '';
+  $('#cLog').textContent = '';
+  if(conta && conta.token){
+    $('#cUser').textContent = '@' + (conta.user || '?');
+    const dias = conta.exp ? Math.floor((conta.exp - Date.now()) / 86400000) : null;
+    $('#cInfo').innerHTML = conta.exp
+      ? `Token válido até ${fDia(conta.exp)}<br><span class="${dias < 10 ? 'alerta' : ''}">${dias} dias</span>`
+      : 'Token salvo';
+  }else{
+    $('#cUser').textContent = '—';
+    $('#cInfo').textContent = 'Sem token';
+  }
+}
+
+$('#bConta').addEventListener('click', () => document.body.classList.contains('conta') ? fecharConta() : abrirConta());
+$('#bSalvar').addEventListener('click', async () => {
+  const t = $('#cToken').value.trim(); if(!t) return;
+  const ant = conta;
+  conta = {token: t};
+  $('#cLog').textContent = 'Verificando…';
+  try{
+    const j = await call('GET', '/me', {fields: 'user_id,username'});
+    conta.id = j.user_id || j.id; conta.user = j.username;
+    conta.exp = Date.now() + 5184000000; conta.ref = Date.now();
+    LS.set('conta', conta);
+    mostrarConta();
+    $('#cLog').textContent = 'Salvo';
+  }catch(err){
+    conta = ant;
+    $('#cLog').innerHTML = `<span class="alerta">${esc(err.message)}</span>`;
+  }
+});
+$('#bRenovar').addEventListener('click', async () => {
+  if(!conta || !conta.token) return;
+  $('#cLog').textContent = 'Renovando…';
+  try{ await renovar(); mostrarConta(); $('#cLog').textContent = 'Renovado'; }
+  catch(err){ $('#cLog').innerHTML = `<span class="alerta">${esc(err.message)}</span>`; }
+});
+$('#bSair').addEventListener('click', () => {
+  conta = null; try{ localStorage.removeItem('osino.conta'); }catch(e){}
+  mostrarConta();
+});
+
+function iniciar(){
+  conta = LS.get('conta');
+  const h = lerHash();
+  if(h){ ed = h; LS.set('ultima', h); history.replaceState(null, '', location.pathname); }
+  else ed = LS.get('ultima');
+  render();
+  if(!conta || !conta.token) abrirConta();
+  else if(conta.ref && Date.now() - conta.ref > 3 * 86400000) renovar().catch(() => {});
+}
+window.addEventListener('hashchange', iniciar);
+iniciar();
+
+if('serviceWorker' in navigator) navigator.serviceWorker.register('sw.js').catch(() => {});
+</script>
+</body>
+</html>
