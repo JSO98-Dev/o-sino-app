@@ -149,42 +149,47 @@ function log(msg, cls){
 }
 
 function pubs(){ return LS.get('pub') || {}; }
+const chave = () => ed.d + (['meiodia', 'fechamento'].includes(ed.t) ? '-' + ed.t : '');
+const TIPO = {domingo: 'Domingo', meiodia: 'Meio-dia', fechamento: 'Fechamento'};
+const AVAL = {domingo: 'semanal', meiodia: 'meiodia', fechamento: 'fechamento'};
 
 function render(){
   const m = $('#ed');
   if(!ed){ m.innerHTML = '<div class="vazio">Nenhuma edição</div>'; return; }
-  const p = pubs()[ed.d] || {};
-  const tipo = ed.t === 'domingo' ? 'Domingo' : 'Diário';
+  const p = pubs()[chave()] || {};
+  const tipo = TIPO[ed.t] || 'Abertura';
   m.innerHTML = `
     <div class="meta"><span>${fData(ed.d)}</span><span>${tipo}${ed.n ? ' · Nº ' + esc(ed.n) : ''}</span></div>
-    <h2>Carrossel <span>${ed.s.length} slides</span></h2>
-    <div class="carr">${ed.s.map(u => `<img src="${esc(u)}" alt="" loading="lazy">`).join('')}</div>
+    ${ed.s.length ? `<h2>Carrossel <span>${ed.s.length} slides</span></h2>
+    <div class="carr">${ed.s.map(u => `<img src="${esc(u)}" alt="" loading="lazy">`).join('')}</div>` : ''}
     ${ed.st ? `<h2>Story</h2><div class="story"><img src="${esc(ed.st)}" alt=""></div>` : ''}
-    <h2>Legenda <span id="cont"></span></h2>
-    <textarea id="leg" spellcheck="true">${esc(p.legenda || ed.l || '')}</textarea>
+    ${ed.s.length ? `<h2>Legenda <span id="cont"></span></h2>
+    <textarea id="leg" spellcheck="true">${esc(p.legenda || ed.l || '')}</textarea>` : ''}
     <div id="pubBox"></div>
     <div class="opc">
-      <label><input type="checkbox" id="oC" ${p.carrossel ? 'disabled' : 'checked'}> Carrossel</label>
+      ${ed.s.length ? `<label><input type="checkbox" id="oC" ${p.carrossel ? 'disabled' : 'checked'}> Carrossel</label>` : ''}
       ${ed.st ? `<label><input type="checkbox" id="oS" ${p.story ? 'disabled' : 'checked'}> Story</label>` : ''}
     </div>
     <button class="btn" id="bPub">Publicar</button>
-    <a class="btn sec" id="bFeed" href="${APP_URL}#avaliar-${ed.t === 'domingo' ? 'semanal' : 'diario'}-${esc(ed.d)}" target="_blank" rel="noopener">Feedback</a>
+    <a class="btn sec" id="bFeed" href="${APP_URL}#avaliar-${AVAL[ed.t] || 'diario'}-${esc(ed.d)}" target="_blank" rel="noopener">Feedback</a>
     <div id="log"></div>`;
   const leg = $('#leg');
-  const cont = () => { $('#cont').textContent = leg.value.length + ' / 2200'; };
-  leg.addEventListener('input', cont); cont();
+  if(leg){
+    const cont = () => { $('#cont').textContent = leg.value.length + ' / 2200'; };
+    leg.addEventListener('input', cont); cont();
+  }
   $('#bPub').addEventListener('click', publicar);
   mostrarPub();
 }
 
 function mostrarPub(){
-  const p = pubs()[ed.d] || {};
+  const p = pubs()[chave()] || {};
   const box = $('#pubBox'); if(!box) return;
   const itens = [];
   if(p.carrossel) itens.push(`Carrossel publicado ${p.carrosselEm || ''}${p.link ? `<br><a href="${esc(p.link)}" target="_blank" rel="noopener">Ver post</a>` : ''}`);
   if(p.story) itens.push(`Story publicado ${p.storyEm || ''}`);
   box.innerHTML = itens.length ? `<div class="pub">${itens.join('<br>')}</div>` : '';
-  const tudo = p.carrossel && (!ed.st || p.story);
+  const tudo = (!ed.s.length || p.carrossel) && (!ed.st || p.story);
   const b = $('#bPub'); if(b) b.style.display = tudo ? 'none' : '';
 }
 
@@ -195,8 +200,8 @@ async function publicar(){
   const querS = $('#oS') && $('#oS').checked && !$('#oS').disabled;
   if(!querC && !querS) return;
   b.disabled = true; $('#log').innerHTML = '';
-  const todos = pubs(); const p = todos[ed.d] || {}; todos[ed.d] = p;
-  const legenda = $('#leg').value.trim();
+  const todos = pubs(); const k = chave(); const p = todos[k] || {}; todos[k] = p;
+  const legenda = $('#leg') ? $('#leg').value.trim() : '';
   const hora = () => new Date().toLocaleTimeString('pt-BR', {hour:'2-digit', minute:'2-digit'});
   const ig = conta.id;
   try{
