@@ -37,6 +37,7 @@ textarea:focus,input:focus{outline:2px solid var(--tinta);outline-offset:-1px}
 .btn{display:block;width:calc(100% - 32px);margin:4px 16px 0;padding:16px;font:600 17px/1 var(--cond);letter-spacing:.04em;text-transform:uppercase;background:var(--tinta);color:var(--papel);border:0;border-radius:0;cursor:pointer}
 .btn:disabled{opacity:.45}
 .btn.sec{background:none;color:var(--tinta);border:1.5px solid var(--tinta)}
+a.btn{text-align:center;text-decoration:none;margin-top:10px}
 #log{font:400 12px/1.6 var(--mono);color:var(--cinza);padding:12px 16px;white-space:pre-wrap;word-break:break-word}
 #log .err{color:var(--queda)}
 #log .ok{color:var(--alta)}
@@ -75,6 +76,7 @@ body.conta #ed{display:none}
 </section>
 
 <script>
+const APP_URL = 'https://claude.ai/artifact/QourToBCprB37i8vXRJKwH';
 const API_IG = 'https://graph.instagram.com';
 const API_FB = 'https://graph.facebook.com/v24.0';
 const fb = () => !!(conta && conta.token && conta.token.startsWith('EAA'));
@@ -166,6 +168,7 @@ function render(){
       ${ed.st ? `<label><input type="checkbox" id="oS" ${p.story ? 'disabled' : 'checked'}> Story</label>` : ''}
     </div>
     <button class="btn" id="bPub">Publicar</button>
+    <a class="btn sec" id="bFeed" href="${APP_URL}#avaliar-${ed.t === 'domingo' ? 'semanal' : 'diario'}-${esc(ed.d)}" target="_blank" rel="noopener">Feedback</a>
     <div id="log"></div>`;
   const leg = $('#leg');
   const cont = () => { $('#cont').textContent = leg.value.length + ' / 2200'; };
