@@ -66,14 +66,19 @@ body.conta #ed{display:none}
   <div class="meta"><span>Conta</span><span id="cUser">—</span></div>
   <div class="info" id="cInfo"></div>
   <h2>Token</h2>
-  <div class="campo"><input id="cToken" type="password" autocomplete="off" spellcheck="false" placeholder="IG…"></div>
+  <div class="campo"><input id="cToken" type="password" autocomplete="off" spellcheck="false" placeholder="IG… / EAA…"></div>
+  <h2>ID Instagram</h2>
+  <div class="campo"><input id="cId" type="text" inputmode="numeric" autocomplete="off" spellcheck="false" placeholder="1784…"></div>
   <div class="linha"><button class="btn" id="bSalvar">Salvar</button></div>
   <div class="linha"><button class="btn sec" id="bRenovar">Renovar</button><button class="btn sec" id="bSair">Sair</button></div>
   <div id="cLog" class="info"></div>
 </section>
 
 <script>
-const API = 'https://graph.instagram.com';
+const API_IG = 'https://graph.instagram.com';
+const API_FB = 'https://graph.facebook.com/v24.0';
+const fb = () => !!(conta && conta.token && conta.token.startsWith('EAA'));
+const API = () => fb() ? API_FB : API_IG;
 const $ = s => document.querySelector(s);
 const LS = {
   get(k){ try{ return JSON.parse(localStorage.getItem('osino.'+k)); }catch(e){ return null; } },
@@ -104,7 +109,7 @@ function lerHash(){
 async function call(method, path, params){
   if(!conta || !conta.token) throw new Error('sem token');
   const body = new URLSearchParams({...params, access_token: conta.token});
-  let url = API + path; const opt = {method};
+  let url = API() + path; const opt = {method};
   if(method === 'GET') url += '?' + body; else opt.body = body;
   const r = await fetch(url, opt);
   const j = await r.json().catch(() => ({}));
@@ -123,7 +128,8 @@ async function pronto(id){
 }
 
 async function renovar(){
-  const r = await fetch(API + '/refresh_access_token?grant_type=ig_refresh_token&access_token=' + encodeURIComponent(conta.token));
+  if(fb()) throw new Error('token EAA não renova por aqui');
+  const r = await fetch(API_IG + '/refresh_access_token?grant_type=ig_refresh_token&access_token=' + encodeURIComponent(conta.token));
   const j = await r.json().catch(() => ({}));
   if(!j.access_token) throw new Error(j.error ? j.error.message : 'falha ao renovar');
   conta.token = j.access_token;
@@ -222,7 +228,7 @@ async function publicar(){
       LS.set('pub', todos);
       log('Story publicado', 'ok');
     }
-    if(!conta.ref || Date.now() - conta.ref > 86400000){ try{ await renovar(); }catch(e){} }
+    if(!fb() && (!conta.ref || Date.now() - conta.ref > 86400000)){ try{ await renovar(); }catch(e){} }
   }catch(err){
     log('Erro: ' + err.message, 'err');
   }
@@ -241,6 +247,7 @@ function fecharConta(){
 }
 function mostrarConta(){
   $('#cToken').value = '';
+  $('#cId').value = conta && conta.id ? conta.id : '';
   $('#cLog').textContent = '';
   if(conta && conta.token){
     $('#cUser').textContent = '@' + (conta.user || '?');
@@ -257,13 +264,28 @@ function mostrarConta(){
 $('#bConta').addEventListener('click', () => document.body.classList.contains('conta') ? fecharConta() : abrirConta());
 $('#bSalvar').addEventListener('click', async () => {
   const t = $('#cToken').value.trim(); if(!t) return;
+  const idDig = $('#cId').value.trim();
   const ant = conta;
   conta = {token: t};
   $('#cLog').textContent = 'Verificando…';
   try{
-    const j = await call('GET', '/me', {fields: 'user_id,username'});
-    conta.id = j.user_id || j.id; conta.user = j.username;
-    conta.exp = Date.now() + 5184000000; conta.ref = Date.now();
+    if(fb()){
+      let id = idDig, user = '';
+      if(!id){
+        try{
+          const j = await call('GET', '/me/accounts', {fields: 'instagram_business_account{id,username}'});
+          const c = (j.data || []).map(p => p.instagram_business_account).find(Boolean);
+          if(c){ id = c.id; user = c.username; }
+        }catch(e){}
+      }
+      if(!id) throw new Error('informe o ID Instagram');
+      if(!user) user = (await call('GET', '/' + id, {fields: 'username'})).username;
+      conta.id = id; conta.user = user; conta.exp = null; conta.ref = Date.now();
+    }else{
+      const j = await call('GET', '/me', {fields: 'user_id,username'});
+      conta.id = idDig || j.user_id || j.id; conta.user = j.username;
+      conta.exp = Date.now() + 5184000000; conta.ref = Date.now();
+    }
     LS.set('conta', conta);
     mostrarConta();
     $('#cLog').textContent = 'Salvo';
@@ -290,7 +312,7 @@ function iniciar(){
   else ed = LS.get('ultima');
   render();
   if(!conta || !conta.token) abrirConta();
-  else if(conta.ref && Date.now() - conta.ref > 3 * 86400000) renovar().catch(() => {});
+  else if(!fb() && conta.ref && Date.now() - conta.ref > 3 * 86400000) renovar().catch(() => {});
 }
 window.addEventListener('hashchange', iniciar);
 iniciar();
