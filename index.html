@@ -111,9 +111,13 @@ function lerHash(){
 async function call(method, path, params){
   if(!conta || !conta.token) throw new Error('sem token');
   const body = new URLSearchParams({...params, access_token: conta.token});
-  let url = API() + path; const opt = {method};
+  let url = API() + path; const ctl = new AbortController(); const opt = {method, signal: ctl.signal};
   if(method === 'GET') url += '?' + body; else opt.body = body;
-  const r = await fetch(url, opt);
+  const t = setTimeout(() => ctl.abort(), 90000);
+  let r;
+  try{ r = await fetch(url, opt); }
+  catch(e){ throw new Error(e.name === 'AbortError' ? 'o Instagram não respondeu em 90 s' : 'falha de rede (' + e.message + ')'); }
+  finally{ clearTimeout(t); }
   const j = await r.json().catch(() => ({}));
   if(!r.ok || j.error) throw new Error(j.error ? (j.error.error_user_msg || j.error.message) : 'HTTP ' + r.status);
   return j;
@@ -194,12 +198,14 @@ function mostrarPub(){
 }
 
 async function publicar(){
-  if(!conta || !conta.token){ abrirConta(); return; }
+  if(!conta || !conta.token){ abrirConta(); $('#cLog').innerHTML = '<span class="alerta">Sem token neste navegador: cole o token e salve para publicar.</span>'; return; }
   const b = $('#bPub');
   const querC = $('#oC') && $('#oC').checked && !$('#oC').disabled;
   const querS = $('#oS') && $('#oS').checked && !$('#oS').disabled;
-  if(!querC && !querS) return;
-  b.disabled = true; $('#log').innerHTML = '';
+  $('#log').innerHTML = '';
+  if(!querC && !querS){ log('Nada marcado para publicar: carrossel e story já publicados ou desmarcados.', 'err'); return; }
+  if(!conta.id){ log('Erro: conta sem ID Instagram. Abra Conta e salve o token de novo.', 'err'); return; }
+  b.disabled = true; log('Iniciando publicação…');
   const todos = pubs(); const k = chave(); const p = todos[k] || {}; todos[k] = p;
   const legenda = $('#leg') ? $('#leg').value.trim() : '';
   const hora = () => new Date().toLocaleTimeString('pt-BR', {hour:'2-digit', minute:'2-digit'});
@@ -241,7 +247,9 @@ async function publicar(){
     log('Erro: ' + err.message, 'err');
   }
   b.disabled = false;
+  const reg = $('#log').innerHTML;
   render();
+  $('#log').innerHTML = reg;
 }
 
 function abrirConta(){
@@ -297,6 +305,7 @@ $('#bSalvar').addEventListener('click', async () => {
     LS.set('conta', conta);
     mostrarConta();
     $('#cLog').textContent = 'Salvo';
+    if(ed) setTimeout(fecharConta, 800);
   }catch(err){
     conta = ant;
     $('#cLog').innerHTML = `<span class="alerta">${esc(err.message)}</span>`;
@@ -316,9 +325,11 @@ $('#bSair').addEventListener('click', () => {
 function iniciar(){
   conta = LS.get('conta');
   const h = lerHash();
+  const ruim = !h && location.hash.length > 1;
   if(h){ ed = h; LS.set('ultima', h); history.replaceState(null, '', location.pathname); }
   else ed = LS.get('ultima');
   render();
+  if(ruim) log('Link de aprovação incompleto ou inválido: mostrando a última edição salva. Abra o link inteiro de novo.', 'err');
   if(!conta || !conta.token) abrirConta();
   else if(!fb() && conta.ref && Date.now() - conta.ref > 3 * 86400000) renovar().catch(() => {});
 }
