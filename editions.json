@@ -1,4 +1,48 @@
 {
- "edicoes": [],
- "vistos": []
+ "edicoes": [
+  {
+   "v": 1,
+   "d": "2026-11-13",
+   "t": "diario",
+   "n": 50,
+   "s": [
+    "https://lh3.googleusercontent.com/d/1VR8T4rid1TNqLgaBdxOA0vUBIHhV12y7",
+    "https://lh3.googleusercontent.com/d/1N_T62Awe3TT9LKkckEMCzHCLKjA9pNg2",
+    "https://lh3.googleusercontent.com/d/19kXWczz78sKp8uJKM0WXPRgn382SR3C-",
+    "https://lh3.googleusercontent.com/d/1kOx-ZQWwQsJQbW882tHX4JLIf08efg5n",
+    "https://lh3.googleusercontent.com/d/1_irleVfIlAMVuIMarawlMIIuxAaspC4O",
+    "https://lh3.googleusercontent.com/d/1bXh8mwNNpe4xbSop5TId-PeQFkAqWU7o",
+    "https://lh3.googleusercontent.com/d/1vF_9ZdTTT-hS5tm9Mjs8u5NflziQw7TH",
+    "https://lh3.googleusercontent.com/d/1Soil50rXBlR-mUQk5zncixTLqY6vSdrJ"
+   ],
+   "st": "https://lh3.googleusercontent.com/d/17erWZl9WSt3nBZ5F53zMvxBLkbCp6bcv",
+   "l": "Senado aprova texto-base do pacote fiscal\nIbovespa cai 0,43%, a 171.324 pontos, e dólar sobe a R$ 5,6519, maior nível em 17 meses.\nTreasury de 10 anos volta acima de 5%; iene perto de 160 por dólar.\nIrã relata navio de GNL atingido por mina em Ormuz; Brent a US$ 95,57.\nMercados, manchetes, análise e agenda no carrossel.\n#mercadofinanceiro #ibovespa #economia #dolar #investimentos",
+   "m": "Senado aprova texto-base do pacote fiscal",
+   "criado": "2026-11-13T06:55:00-03:00"
+  },
+  {
+   "v": 1,
+   "d": "2026-11-12",
+   "t": "diario",
+   "n": 49,
+   "s": [
+    "https://lh3.googleusercontent.com/d/1vbx3wK21CWVeOCdXvh6yGDQx5WHcG0ma",
+    "https://lh3.googleusercontent.com/d/1ja5p0h2UQ38SZnuefz2nm--Wn5FqxsbY",
+    "https://lh3.googleusercontent.com/d/1suP5RXLMcbtKVCjCq-xlKZaUCjM3C8yE",
+    "https://lh3.googleusercontent.com/d/17neK9-AYAV5lZlLmK6JXvzijegcGVL5c",
+    "https://lh3.googleusercontent.com/d/1fuYn_00ZpRqClGQ4jaj9ZBfQQt5f0KH1",
+    "https://lh3.googleusercontent.com/d/1WtAqww3JR5w5GgYnDpKdd0O5MI_fDlVQ",
+    "https://lh3.googleusercontent.com/d/1RzL5w9imOanlsM5Tn4ozhGKOA3wXbb8U",
+    "https://lh3.googleusercontent.com/d/18vibJS2CB1N6T0NjuQXhtA3WU_6VlhM4"
+   ],
+   "st": "https://lh3.googleusercontent.com/d/1pcW8qCfv9f-NpZ_diTzIEhxiDbZXvRol",
+   "l": "Nvidia: conselho avalia saída de Jensen Huang\nIbovespa sobe 0,42%, a 172.060 pontos, e dólar cai a R$ 5,5618 com pacote fiscal de até R$ 60 bi.\nCoreWeave dispara 24,7% e leva o Nasdaq a +1,60%; futuros recuam na madrugada com a crise na Nvidia.\nIPCA de outubro sai às 09h, com consenso de +0,25% no mês.\nMercados, manchetes, análise e agenda no carrossel.\n#mercadofinanceiro #ibovespa #economia #dolar #investimentos\n",
+   "m": "Nvidia: conselho avalia saída de Jensen Huang",
+   "criado": "2026-11-12T07:05:00-03:00"
+  }
+ ],
+ "vistos": [
+  "1FMLeJP6h2eiSNjEtG5IKtha5V7DYRZnR",
+  "1IXVCtgcrL5isQNjrI8No1WF26Vewlk2V"
+ ]
 }
