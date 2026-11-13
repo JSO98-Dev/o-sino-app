@@ -54,6 +54,13 @@ body.conta #ed{display:none}
 .info .alerta{color:var(--queda)}
 .linha{display:flex;gap:10px;padding:12px 16px 0}
 .linha .btn{margin:0;width:auto;flex:1}
+.lista{list-style:none}
+.lista li{display:block;padding:14px 16px;border-bottom:1px solid var(--linha);cursor:pointer}
+.lista .l1{display:flex;justify-content:space-between;font:400 13px/1 var(--mono);color:var(--cinza)}
+.lista .l2{font:600 18px/1.25 var(--serif);margin-top:8px}
+.lista .pend{color:var(--vermelho)}
+.lista .feito{color:var(--alta)}
+.meta .lnk{padding:0;font-size:13px;color:var(--cinza)}
 </style>
 </head>
 <body>
@@ -87,7 +94,8 @@ const LS = {
   get(k){ try{ return JSON.parse(localStorage.getItem('osino.'+k)); }catch(e){ return null; } },
   set(k,v){ try{ localStorage.setItem('osino.'+k, JSON.stringify(v)); }catch(e){} }
 };
-const VER = '6';
+const VER = '7';
+const FEED = 'https://raw.githubusercontent.com/JSO98-Dev/o-sino-app/main/editions.json';
 const sleep = ms => new Promise(r => setTimeout(r, ms));
 const esc = s => String(s).replace(/[&<>"]/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
 const DIAS = ['Dom','Seg','Ter','Qua','Qui','Sex','Sáb'];
@@ -96,6 +104,7 @@ const fDia = ms => new Date(ms).toLocaleDateString('pt-BR');
 
 let conta = LS.get('conta');
 let ed = null;
+let lista = LS.get('lista') || [];
 
 function lerHash(){
   const h = location.hash.slice(1);
@@ -161,17 +170,25 @@ function mostrarLog(){
 }
 
 function pubs(){ return LS.get('pub') || {}; }
-const chave = () => ed.d + (['meiodia', 'fechamento'].includes(ed.t) ? '-' + ed.t : '');
+const chaveDe = e => e.d + (['meiodia', 'fechamento'].includes(e.t) ? '-' + e.t : '');
+const chave = () => chaveDe(ed);
+const feito = e => { const p = pubs()[chaveDe(e)] || {}; return (!e.s.length || p.carrossel) && (!e.st || p.story); };
 const TIPO = {domingo: 'Domingo', meiodia: 'Meio-dia', fechamento: 'Fechamento'};
 const AVAL = {domingo: 'semanal', meiodia: 'meiodia', fechamento: 'fechamento'};
 
 function render(){
   const m = $('#ed');
-  if(!ed){ m.innerHTML = '<div class="vazio">Nenhuma edição</div>'; return; }
+  if(!ed){
+    m.innerHTML = lista.length ? `<ul class="lista">${lista.map((e, i) => `<li data-i="${i}">
+      <div class="l1"><span>${fData(e.d)} · ${TIPO[e.t] || 'Abertura'}</span>${feito(e) ? '<span class="feito">Publicado</span>' : '<span class="pend">Pendente</span>'}</div>
+      ${e.m ? `<div class="l2">${esc(e.m)}</div>` : ''}</li>`).join('')}</ul><div class="ver">versão ${VER}</div>` : '<div class="vazio">Nenhuma edição</div>';
+    m.querySelectorAll('li').forEach(li => li.addEventListener('click', () => { ed = lista[+li.dataset.i]; render(); scrollTo(0, 0); }));
+    return;
+  }
   const p = pubs()[chave()] || {};
   const tipo = TIPO[ed.t] || 'Abertura';
   m.innerHTML = `
-    <div class="meta"><span>${fData(ed.d)}</span><span>${tipo}${ed.n ? ' · Nº ' + esc(ed.n) : ''}</span></div>
+    <div class="meta"><button class="lnk" id="bVoltar">‹ Edições</button><span>${fData(ed.d)}</span><span>${tipo}${ed.n ? ' · Nº ' + esc(ed.n) : ''}</span></div>
     ${ed.s.length ? `<h2>Carrossel <span>${ed.s.length} slides</span></h2>
     <div class="carr">${ed.s.map(u => `<img src="${esc(u)}" alt="" loading="lazy">`).join('')}</div>` : ''}
     ${ed.st ? `<h2>Story</h2><div class="story"><img src="${esc(ed.st)}" alt=""></div>` : ''}
@@ -192,6 +209,7 @@ function render(){
     leg.addEventListener('input', cont); cont();
   }
   $('#bPub').addEventListener('click', publicar);
+  $('#bVoltar').addEventListener('click', () => { ed = null; render(); carregar(); });
   mostrarPub();
   mostrarLog();
 }
@@ -333,18 +351,34 @@ $('#bSair').addEventListener('click', () => {
   mostrarConta();
 });
 
+async function carregar(){
+  try{
+    const r = await fetch(FEED + '?t=' + Date.now(), {cache: 'no-store'});
+    if(r.ok){ lista = (await r.json()).edicoes || []; LS.set('lista', lista); }
+  }catch(e){}
+  let abriu = false;
+  if(alvo){ const e = lista.find(x => chaveDe(x) === alvo); if(e){ alvo = null; ed = e; abriu = true; } }
+  if(!ed || abriu) render();
+}
+let alvo = null;
+
 function iniciar(){
   conta = LS.get('conta');
-  const h = lerHash();
-  const ruim = !h && location.hash.length > 1;
-  if(h){ ed = h; LS.set('ultima', h); history.replaceState(null, '', location.pathname); }
-  else ed = LS.get('ultima');
+  const pedido = location.hash.startsWith('#ed=') ? decodeURIComponent(location.hash.slice(4)) : null;
+  const h = pedido ? null : lerHash();
+  const ruim = !h && !pedido && location.hash.length > 1;
+  if(pedido || h) history.replaceState(null, '', location.pathname);
+  ed = h || null;
+  alvo = pedido;
+  if(pedido){ const e = lista.find(x => chaveDe(x) === pedido); if(e){ ed = e; alvo = null; } }
   render();
+  carregar();
   if(ruim) log('Link de aprovação incompleto ou inválido: mostrando a última edição salva. Abra o link inteiro de novo.', 'err');
   if(!conta || !conta.token) abrirConta();
   else if(!fb() && conta.ref && Date.now() - conta.ref > 3 * 86400000) renovar().catch(() => {});
 }
 window.addEventListener('hashchange', iniciar);
+document.addEventListener('visibilitychange', () => { if(!document.hidden) carregar(); });
 iniciar();
 
 if('serviceWorker' in navigator) navigator.serviceWorker.register('sw.js', {updateViaCache: 'none'}).catch(() => {});
