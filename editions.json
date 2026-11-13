@@ -3,6 +3,17 @@
   {
    "v": 1,
    "d": "2026-11-13",
+   "t": "fechamento",
+   "n": 50,
+   "s": [],
+   "st": "https://lh3.googleusercontent.com/d/1ueCi4gf9GZ5sTx-Me_tNne50PYg77qxj",
+   "l": "",
+   "m": "Ibovespa sobe 0,66% com pacote fiscal e varejo",
+   "criado": "2026-11-13T19:11:10-03:00"
+  },
+  {
+   "v": 1,
+   "d": "2026-11-13",
    "t": "diario",
    "n": 50,
    "s": [
@@ -43,6 +54,7 @@
  ],
  "vistos": [
   "1FMLeJP6h2eiSNjEtG5IKtha5V7DYRZnR",
-  "1IXVCtgcrL5isQNjrI8No1WF26Vewlk2V"
+  "1IXVCtgcrL5isQNjrI8No1WF26Vewlk2V",
+  "1qsq7dDn2wynB5bVRX7aT1YhMilU85b-t"
  ]
 }
