@@ -2,6 +2,25 @@
  "edicoes": [
   {
    "v": 1,
+   "d": "2026-11-14",
+   "t": "diario",
+   "n": 51,
+   "s": [
+    "https://lh3.googleusercontent.com/d/1BJGtnGR3mSgL0_XLDFF004b5IRQPcHxX",
+    "https://lh3.googleusercontent.com/d/17MZpUxL43_Es0DZRy0bcaXDLvBwZpKFh",
+    "https://lh3.googleusercontent.com/d/1eFOKCcKxHV2eS1WeUc1Pu6An6AIESv1P",
+    "https://lh3.googleusercontent.com/d/1CMU6ZGxGAb-K84hGw5vRmPX16WDtv4qQ",
+    "https://lh3.googleusercontent.com/d/1KMfyxv-TIM76JHruy-wdJL0G-ZXt73Z-",
+    "https://lh3.googleusercontent.com/d/1Qiwk1yi7iFJaGlLllhG7q45KrnNpW69r",
+    "https://lh3.googleusercontent.com/d/1st7Rm3Evt99IvjuHu1qGNbMNlWZxT4Ng"
+   ],
+   "st": "https://lh3.googleusercontent.com/d/10szGQo_MbFsY0Wx6iKIKWwngPuduNp15",
+   "l": "Ibovespa sobe 0,66% com pacote fiscal e varejo\n\nBolsa fecha a semana com alta de 2,35%; dólar em R$ 5,6550, maior desde jun/2025.\nPPI dos EUA desacelera, mas Treasury de 10 anos fecha em 5,152%.\nOrmuz registra mais um navio atingido por mina; Brent em US$ 95,84.\n\nMercados, manchetes, análise e agenda no carrossel.\n\n#mercadofinanceiro #ibovespa #economia #dolar #investimentos",
+   "m": "Ibovespa sobe 0,66% com pacote fiscal e varejo",
+   "criado": "2026-11-14T06:18:00-03:00"
+  },
+  {
+   "v": 1,
    "d": "2026-11-13",
    "t": "fechamento",
    "n": 50,
@@ -54,6 +73,7 @@
  ],
  "vistos": [
   "1FMLeJP6h2eiSNjEtG5IKtha5V7DYRZnR",
+  "1HYVnbo7BtrTHxZ1-qeaphX5KqgO3GhBq",
   "1IXVCtgcrL5isQNjrI8No1WF26Vewlk2V",
   "1qsq7dDn2wynB5bVRX7aT1YhMilU85b-t"
  ]
