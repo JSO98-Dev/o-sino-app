@@ -22,6 +22,8 @@ def get(url):
 
 
 def chave(e):
+    if e.get('t') == 'manchete':
+        return e['d'] + '-' + str(e.get('k', ''))
     return e['d'] + ('-' + e['t'] if e.get('t') in ORDEM else '')
 
 
@@ -35,13 +37,16 @@ def recente(e, horas=12):
         return False
 
 
-def avisar(e):
-    d = e['d'].split('-')
+def avisar(grupo):
+    base = next((x for x in grupo if x.get('t') != 'manchete'), grupo[0])
+    ext = sum(1 for x in grupo if x.get('t') == 'manchete' and x is not base)
+    tipo = base.get('o') if base.get('t') == 'manchete' else base.get('t')
+    d = base['d'].split('-')
     corpo = {
         'topic': TOPICO,
-        'title': f"O Sino · {TIPO.get(e.get('t'), 'Abertura')} {d[2]}/{d[1]}",
-        'message': e.get('m') or 'Pronta para aprovar',
-        'click': APP + '#ed=' + chave(e),
+        'title': f"O Sino · {TIPO.get(tipo, 'Abertura')} {d[2]}/{d[1]}",
+        'message': (base.get('m') or 'Pronta para aprovar') + (f" · +{ext} manchete{'s' if ext > 1 else ''}" if ext else ''),
+        'click': APP + '#ed=' + chave(base),
         'tags': ['bell'],
         'priority': 4,
     }
@@ -79,15 +84,18 @@ for fid, nome in arquivos:
     vistos.add(fid)
     print('novo', nome)
 
-lista = sorted(edicoes.values(), key=lambda e: (e['d'], ORDEM.get(e.get('t'), 1)), reverse=True)[:150]
+lista = sorted(edicoes.values(), key=lambda e: (e['d'], ORDEM.get(e.get('o') if e.get('t') == 'manchete' else e.get('t'), 1), e.get('t') != 'manchete', -int(re.sub(r'\D', '', str(e.get('k', ''))) or 0)), reverse=True)[:150]
 saida = {'edicoes': lista, 'vistos': sorted(vistos)}
 if saida != base:
     json.dump(saida, open(ARQ, 'w', encoding='utf-8'), ensure_ascii=False, indent=1)
 
+grupos = {}
 for e in novos:
     if recente(e):
-        try:
-            avisar(e)
-            print('aviso', chave(e))
-        except Exception as err:
-            print('aviso falhou', err, file=sys.stderr)
+        grupos.setdefault((e['d'], e.get('o') if e.get('t') == 'manchete' else e.get('t')), []).append(e)
+for g in grupos.values():
+    try:
+        avisar(g)
+        print('aviso', chave(g[0]), len(g))
+    except Exception as err:
+        print('aviso falhou', err, file=sys.stderr)

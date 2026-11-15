@@ -94,7 +94,7 @@ const LS = {
   get(k){ try{ return JSON.parse(localStorage.getItem('osino.'+k)); }catch(e){ return null; } },
   set(k,v){ try{ localStorage.setItem('osino.'+k, JSON.stringify(v)); }catch(e){} }
 };
-const VER = '7';
+const VER = '8';
 const FEED = 'https://raw.githubusercontent.com/JSO98-Dev/o-sino-app/main/editions.json';
 const sleep = ms => new Promise(r => setTimeout(r, ms));
 const esc = s => String(s).replace(/[&<>"]/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
@@ -170,7 +170,8 @@ function mostrarLog(){
 }
 
 function pubs(){ return LS.get('pub') || {}; }
-const chaveDe = e => e.d + (['meiodia', 'fechamento'].includes(e.t) ? '-' + e.t : '');
+const chaveDe = e => e.d + (e.t === 'manchete' ? '-' + e.k : ['meiodia', 'fechamento'].includes(e.t) ? '-' + e.t : '');
+const tipoDe = e => e.t === 'manchete' ? 'Manchete · ' + (e.a || '') : TIPO[e.t] || 'Abertura';
 const chave = () => chaveDe(ed);
 const feito = e => { const p = pubs()[chaveDe(e)] || {}; return (!e.s.length || p.carrossel) && (!e.st || p.story); };
 const TIPO = {domingo: 'Domingo', meiodia: 'Meio-dia', fechamento: 'Fechamento'};
@@ -180,27 +181,27 @@ function render(){
   const m = $('#ed');
   if(!ed){
     m.innerHTML = lista.length ? `<ul class="lista">${lista.map((e, i) => `<li data-i="${i}">
-      <div class="l1"><span>${fData(e.d)} · ${TIPO[e.t] || 'Abertura'}</span>${feito(e) ? '<span class="feito">Publicado</span>' : '<span class="pend">Pendente</span>'}</div>
+      <div class="l1"><span>${fData(e.d)} · ${esc(tipoDe(e))}</span>${feito(e) ? '<span class="feito">Publicado</span>' : '<span class="pend">Pendente</span>'}</div>
       ${e.m ? `<div class="l2">${esc(e.m)}</div>` : ''}</li>`).join('')}</ul><div class="ver">versão ${VER}</div>` : '<div class="vazio">Nenhuma edição</div>';
     m.querySelectorAll('li').forEach(li => li.addEventListener('click', () => { ed = lista[+li.dataset.i]; render(); scrollTo(0, 0); }));
     return;
   }
   const p = pubs()[chave()] || {};
-  const tipo = TIPO[ed.t] || 'Abertura';
+  const tipo = esc(tipoDe(ed));
   m.innerHTML = `
     <div class="meta"><button class="lnk" id="bVoltar">‹ Edições</button><span>${fData(ed.d)}</span><span>${tipo}${ed.n ? ' · Nº ' + esc(ed.n) : ''}</span></div>
-    ${ed.s.length ? `<h2>Carrossel <span>${ed.s.length} slides</span></h2>
+    ${ed.s.length ? `<h2>${ed.s.length > 1 ? 'Carrossel' : 'Post'} <span>${ed.s.length > 1 ? ed.s.length + ' slides' : ''}</span></h2>
     <div class="carr">${ed.s.map(u => `<img src="${esc(u)}" alt="" loading="lazy">`).join('')}</div>` : ''}
     ${ed.st ? `<h2>Story</h2><div class="story"><img src="${esc(ed.st)}" alt=""></div>` : ''}
     ${ed.s.length ? `<h2>Legenda <span id="cont"></span></h2>
     <textarea id="leg" spellcheck="true">${esc(p.legenda || ed.l || '')}</textarea>` : ''}
     <div id="pubBox"></div>
     <div class="opc">
-      ${ed.s.length ? `<label><input type="checkbox" id="oC" ${p.carrossel ? 'disabled' : 'checked'}> Carrossel</label>` : ''}
+      ${ed.s.length ? `<label><input type="checkbox" id="oC" ${p.carrossel ? 'disabled' : 'checked'}> ${ed.s.length > 1 ? 'Carrossel' : 'Post'}</label>` : ''}
       ${ed.st ? `<label><input type="checkbox" id="oS" ${p.story ? 'disabled' : 'checked'}> Story</label>` : ''}
     </div>
     <button class="btn" id="bPub">Publicar</button>
-    <a class="btn sec" id="bFeed" href="${APP_URL}#avaliar-${AVAL[ed.t] || 'diario'}-${esc(ed.d)}" target="_blank" rel="noopener">Feedback</a>
+    <a class="btn sec" id="bFeed" href="${APP_URL}#avaliar-${AVAL[ed.o || ed.t] || 'diario'}-${esc(ed.d)}" target="_blank" rel="noopener">Feedback</a>
     <div id="log"></div>
     <div class="ver">versão ${VER}</div>`;
   const leg = $('#leg');
