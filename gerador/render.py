@@ -147,6 +147,11 @@ td .v{font-size:24px}
 .painel{margin-top:auto;border-top:2px solid var(--tinta);padding-top:22px;flex:none;display:flex;flex-direction:column;gap:6px}
 .painel .num{display:flex;align-items:center;gap:10px;font-family:'Plex Cond';font-weight:600;font-size:184px;line-height:1;letter-spacing:-.01em}
 .mch h1{font-size:92px;line-height:98px}
+.tcurto{display:grid;grid-template-columns:auto 1fr;gap:20px;align-items:center;margin-top:22px;flex:none}
+.tcurto .scale div{padding:9px 0;font-size:19px}
+.mch .big3{margin-top:22px}
+.dq{display:flex;align-items:baseline;gap:18px;margin-top:22px}
+.dq .num{display:flex;align-items:center;gap:6px;font-family:'Plex Cond';font-weight:600;font-size:84px;line-height:1}
 .painel .icone{display:flex;justify-content:center;padding:26px 0 10px}
 .cta{display:flex;justify-content:space-between;align-items:baseline;border-top:2px solid var(--tinta);padding-top:20px;margin-top:auto;flex:none}
 """
@@ -231,10 +236,18 @@ def big3(ed):
     return f'<div class="big3">{out}</div>'
 
 
+def termo_curto(ed):
+    t = ed["termometro"]
+    cells = "".join(f'<div class="{"on" if x == t["leitura"] else ""}">{x}</div>' for x in ("Risk-off", "Neutro", "Risk-on"))
+    rot = "Termômetro da semana" if DOM else "Termômetro para amanhã" if ED == "fechamento" else "Termômetro do dia"
+    return (f'<div class="tcurto"><span class="r cz" style="font-size:18px">{rot}</span>'
+            f'<div class="scale" style="margin-top:0">{cells}</div></div>')
+
+
 def capa(ed, foco, n):
-    kick = '<div class="r kick">Manchete da semana</div>' if DOM else '<div class="r kick vm">Manchete</div>'
-    return (f'<section class="s">{mast(ed)}<div class="body">{kick}<h1>{e(foco["titulo"])}</h1>'
-            f'<p class="dek">{e(foco["dado"])}</p>{termo(ed)}{big3(ed)}</div>{foot(1, n)}</section>')
+    vis = visual(foco, num=150, sh=110, ico=190)
+    return (f'<section class="s mch">{mast(ed)}<div class="body"><span class="r tag" style="margin-top:30px">{e(assunto(foco))}</span><h1>{e(foco["titulo"])}</h1>'
+            f'<p class="dek">{e(foco["dado"])}</p><div class="painel" style="margin-top:auto">{vis}</div>{termo_curto(ed)}{big3(ed)}</div>{foot(1, n)}</section>')
 
 
 def story(ed, foco):
@@ -253,10 +266,10 @@ def story(ed, foco):
             f'</div></section>')
 
 
-def spark(serie, cor):
+def spark(serie, cor, h=170):
     v = [float(x) for x in serie]
     lo, hi = min(v), max(v)
-    w, h, pad = 936, 170, 10
+    w, pad = 936, 10
     pts = [(pad + i * (w - 2 * pad) / (len(v) - 1), pad + (h - 2 * pad) * (1 - ((x - lo) / (hi - lo) if hi > lo else .5))) for i, x in enumerate(v)]
     lin = " ".join(f"{x:.1f},{y:.1f}" for x, y in pts)
     x, y = pts[-1]
@@ -264,18 +277,25 @@ def spark(serie, cor):
             f'stroke="var(--{cor})" stroke-width="5" stroke-linejoin="round" stroke-linecap="round"/><circle cx="{x:.1f}" cy="{y:.1f}" r="10" fill="var(--{cor})"/></svg>')
 
 
-def manchete(ed, c):
-    a = c.get("assunto") or ASSUNTO.get(c["tag"], "ECONOMIA")
+def assunto(c):
+    return c.get("assunto") or ASSUNTO.get(c["tag"], "ECONOMIA")
+
+
+def visual(c, num=184, sh=170, ico=260):
     d = c.get("destaque") or {}
     if d.get("valor"):
         k = {"↑": "up", "↓": "down", "→": "flat"}.get(d.get("dir"), sinal(d["valor"]))
         cor = {"up": "alta", "down": "queda"}.get(k, "cinza")
         serie = c.get("serie") or []
-        vis = (f'<span class="r cz" style="font-size:24px">{e(d.get("rotulo", ""))}</span>'
-               f'<div class="num {k}">{ic(k, 150, sw=2.6)}{e(d["valor"])}</div>'
-               + (spark(serie, cor) + f'<span class="r cz" style="font-size:18px;margin-top:6px">Últimos {len(serie)} pregões</span>' if len(serie) >= 3 else ""))
-    else:
-        vis = f'<div class="icone">{ic(a, 260, sw=1.1)}</div>'
+        return (f'<span class="r cz" style="font-size:24px">{e(d.get("rotulo", ""))}</span>'
+                f'<div class="num {k}" style="font-size:{num}px">{ic(k, round(num * .82), sw=2.6)}{e(d["valor"])}</div>'
+                + (spark(serie, cor, sh) + f'<span class="r cz" style="font-size:18px;margin-top:6px">{"Últimas" if DOM else "Últimos"} {len(serie)} {"semanas" if DOM else "pregões"}</span>' if len(serie) >= 3 else ""))
+    return f'<div class="icone">{ic(assunto(c), ico, sw=1.1)}</div>'
+
+
+def manchete(ed, c):
+    a = assunto(c)
+    vis = visual(c)
     txt, _ = data_ext(ed["data"])
     nota = "Edição completa disponível no feed"
     return (f'<section class="s mch"><div class="regua"></div><div class="mini">{A2}<span class="r" style="font-size:18px">{hora_ed()} · {txt}</span></div><div class="fil"></div>'
@@ -319,8 +339,14 @@ def foco(ed, c, n, idx):
     dirk = {"↑": "up", "↓": "down", "→": "flat"}
     imp = "".join(f'<span class="{dirk.get(i["dir"], "flat")}">{ic(dirk.get(i["dir"], "flat"), 22)}<span style="color:var(--tinta)">{e(i["ativo"])}</span></span>'
                   for i in c["impacto"])
-    tag = c["tag"].capitalize() if c["tag"] != "GEOPOLÍTICA" else "Geopolítica"
-    return (f'<section class="s">{mini(ed, "Análise · " + tag)}<div class="body"><h2 class="f" style="margin-top:32px">{e(c["titulo"])}</h2>'
+    d = c.get("destaque") or {}
+    dq = ""
+    if d.get("valor"):
+        k = {"↑": "up", "↓": "down", "→": "flat"}.get(d.get("dir"), sinal(d["valor"]))
+        dq = (f'<div class="dq"><div class="num {k}">{ic(k, 64, sw=2.6)}{e(d["valor"])}</div>'
+              f'<span class="r cz" style="font-size:22px">{e(d.get("rotulo", ""))}</span></div>')
+    return (f'<section class="s">{mini(ed, "Análise")}<div class="body"><span class="r tag" style="margin-top:28px;font-size:20px">{e(assunto(c))}</span>'
+            f'<h2 class="f" style="margin-top:14px">{e(c["titulo"])}</h2>{dq}'
             f'<p class="dado">{e(c["dado"])}</p>'
             f'<div class="blk"><div class="r vm">Por que importa</div><p>{e(mec)}</p></div>'
             + (f'<div class="blk obs"><div class="r">{"O que observar na semana" if DOM else "O que observar amanhã" if ED == "fechamento" else "O que observar hoje"}</div><p>{e(cap1(obs.removeprefix("Observe ")))}</p></div>' if obs else "")
