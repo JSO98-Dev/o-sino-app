@@ -5,6 +5,7 @@ PASTA = '1N6jEp24YigCB55VWuPpBemDe7NKscYVJ'
 TOPICO = os.environ.get('NTFY_TOPIC') or 'osino-0162925b313e872b'
 APP = 'https://jso98-dev.github.io/o-sino-app/'
 ARQ = 'editions.json'
+MIDIA = 'midia'
 TIPO = {'domingo': 'Domingo', 'meiodia': 'Meio-dia', 'fechamento': 'Fechamento'}
 ORDEM = {'meiodia': 2, 'fechamento': 3}
 
@@ -19,6 +20,26 @@ def get(url):
             erro = e
             time.sleep(3)
     raise erro
+
+
+def video(fid, nome):
+    for url in (f'https://drive.google.com/uc?export=download&id={fid}',
+                f'https://drive.usercontent.google.com/download?id={fid}&export=download&confirm=t'):
+        b = get(url)
+        if b[4:8] == b'ftyp':
+            os.makedirs(MIDIA, exist_ok=True)
+            open(os.path.join(MIDIA, nome), 'wb').write(b)
+            return APP + MIDIA + '/' + nome
+    raise ValueError('vídeo não baixou')
+
+
+def limpar(dias=30):
+    if not os.path.isdir(MIDIA):
+        return
+    lim = time.strftime('%Y-%m-%d', time.gmtime(time.time() - dias * 86400))
+    for f in os.listdir(MIDIA):
+        if f[:10] < lim:
+            os.remove(os.path.join(MIDIA, f))
 
 
 def chave(e):
@@ -77,6 +98,12 @@ for fid, nome in arquivos:
         print('ignorado', nome, err)
         continue
     k = chave(e)
+    if e.get('rid'):
+        try:
+            e['r'] = video(e.pop('rid'), k + '.mp4')
+        except Exception as err:
+            print('vídeo falhou', nome, err)
+            continue
     atual = edicoes.get(k)
     if not atual or (e.get('criado') or '') >= (atual.get('criado') or ''):
         edicoes[k] = e
@@ -84,6 +111,7 @@ for fid, nome in arquivos:
     vistos.add(fid)
     print('novo', nome)
 
+limpar()
 lista = sorted(edicoes.values(), key=lambda e: (e['d'], ORDEM.get(e.get('o') if e.get('t') == 'manchete' else e.get('t'), 1), e.get('t') != 'manchete', -int(re.sub(r'\D', '', str(e.get('k', ''))) or 0)), reverse=True)[:150]
 saida = {'edicoes': lista, 'vistos': sorted(vistos)}
 if saida != base:

@@ -28,7 +28,7 @@ h2 span{font:400 12px/1 var(--mono);color:var(--cinza);letter-spacing:0;text-tra
 .carr::-webkit-scrollbar{display:none}
 .carr img{flex:0 0 78%;width:78%;min-width:0;height:auto;aspect-ratio:4/5;object-fit:cover;scroll-snap-align:center;background:var(--linha);border:1px solid var(--linha)}
 .story{padding:0 16px}
-.story img{display:block;width:46%;height:auto;aspect-ratio:9/16;object-fit:cover;background:var(--linha);border:1px solid var(--linha)}
+.story img,.story video{display:block;width:46%;height:auto;aspect-ratio:9/16;object-fit:cover;background:var(--linha);border:1px solid var(--linha)}
 textarea{display:block;width:calc(100% - 32px);margin:0 16px;min-height:220px;font:400 14px/1.5 var(--mono);color:var(--tinta);background:#fff;border:1px solid var(--linha);border-radius:0;padding:10px;resize:vertical}
 textarea:focus,input:focus{outline:2px solid var(--tinta);outline-offset:-1px}
 .opc{display:flex;gap:22px;padding:16px}
@@ -110,7 +110,7 @@ const LS = {
   get(k){ try{ return JSON.parse(localStorage.getItem('osino.'+k)); }catch(e){ return null; } },
   set(k,v){ try{ localStorage.setItem('osino.'+k, JSON.stringify(v)); }catch(e){} }
 };
-const VER = '9';
+const VER = '10';
 const FEED = 'https://raw.githubusercontent.com/JSO98-Dev/o-sino-app/main/editions.json';
 const sleep = ms => new Promise(r => setTimeout(r, ms));
 const esc = s => String(s).replace(/[&<>"]/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
@@ -150,8 +150,8 @@ async function call(method, path, params){
   return j;
 }
 
-async function pronto(id){
-  for(let i = 0; i < 45; i++){
+async function pronto(id, n = 45){
+  for(let i = 0; i < n; i++){
     const j = await call('GET', '/' + id, {fields: 'status_code'});
     if(j.status_code === 'FINISHED' || j.status_code === 'PUBLISHED') return;
     if(j.status_code === 'ERROR' || j.status_code === 'EXPIRED') throw new Error('mídia recusada (' + j.status_code + ')');
@@ -189,7 +189,7 @@ function pubs(){ return LS.get('pub') || {}; }
 const chaveDe = e => e.d + (e.t === 'manchete' ? '-' + e.k : ['meiodia', 'fechamento'].includes(e.t) ? '-' + e.t : '');
 const tipoDe = e => e.t === 'manchete' ? 'Manchete · ' + (e.a || '') : TIPO[e.t] || 'Abertura';
 const chave = () => chaveDe(ed);
-const feito = e => { const p = pubs()[chaveDe(e)] || {}; return (!e.s.length || p.carrossel) && (!e.st || p.story); };
+const feito = e => { const p = pubs()[chaveDe(e)] || {}; return (!e.s.length || p.carrossel) && (!e.st || p.story) && (!e.r || p.reels); };
 const TIPO = {domingo: 'Domingo', meiodia: 'Meio-dia', fechamento: 'Fechamento'};
 const AVAL = {domingo: 'semanal', meiodia: 'meiodia', fechamento: 'fechamento'};
 
@@ -208,12 +208,14 @@ function render(){
     <div class="meta"><button class="lnk" id="bVoltar">‹ Edições</button><span>${fData(ed.d)}</span><span>${tipo}${ed.n ? ' · Nº ' + esc(ed.n) : ''}</span></div>
     ${ed.s.length ? `<h2>${ed.s.length > 1 ? 'Carrossel' : 'Post'} <span>${ed.s.length > 1 ? ed.s.length + ' slides' : ''}</span></h2>
     <div class="carr">${ed.s.map(u => `<img src="${esc(u)}" alt="" loading="lazy">`).join('')}</div>` : ''}
+    ${ed.r ? `<h2>Reels</h2><div class="story"><video src="${esc(ed.r)}" controls playsinline muted preload="metadata"></video></div>` : ''}
     ${ed.st ? `<h2>Story</h2><div class="story"><img src="${esc(ed.st)}" alt=""></div>` : ''}
-    ${ed.s.length ? `<h2>Legenda <span id="cont"></span></h2>
+    ${ed.s.length || ed.r ? `<h2>Legenda <span id="cont"></span></h2>
     <textarea id="leg" spellcheck="true">${esc(p.legenda || ed.l || '')}</textarea>` : ''}
     <div id="pubBox"></div>
     <div class="opc">
       ${ed.s.length ? `<label><input type="checkbox" id="oC" ${p.carrossel ? 'disabled' : 'checked'}> ${ed.s.length > 1 ? 'Carrossel' : 'Post'}</label>` : ''}
+      ${ed.r ? `<label><input type="checkbox" id="oR" ${p.reels ? 'disabled' : 'checked'}> Reels</label>` : ''}
       ${ed.st ? `<label><input type="checkbox" id="oS" ${p.story ? 'disabled' : 'checked'}> Story</label>` : ''}
     </div>
     <button class="btn" id="bPub">Publicar</button>
@@ -236,9 +238,10 @@ function mostrarPub(){
   const box = $('#pubBox'); if(!box) return;
   const itens = [];
   if(p.carrossel) itens.push(`Carrossel publicado ${p.carrosselEm || ''}${p.link ? `<br><a href="${esc(p.link)}" target="_blank" rel="noopener">Ver post</a>` : ''}`);
+  if(p.reels) itens.push(`Reels publicado ${p.reelsEm || ''}${p.linkR ? `<br><a href="${esc(p.linkR)}" target="_blank" rel="noopener">Ver Reels</a>` : ''}`);
   if(p.story) itens.push(`Story publicado ${p.storyEm || ''}`);
   box.innerHTML = itens.length ? `<div class="pub">${itens.join('<br>')}</div>` : '';
-  const tudo = (!ed.s.length || p.carrossel) && (!ed.st || p.story);
+  const tudo = (!ed.s.length || p.carrossel) && (!ed.st || p.story) && (!ed.r || p.reels);
   const b = $('#bPub'); if(b) b.style.display = tudo ? 'none' : '';
 }
 
@@ -247,8 +250,9 @@ async function publicar(){
   const b = $('#bPub');
   const querC = $('#oC') && $('#oC').checked && !$('#oC').disabled;
   const querS = $('#oS') && $('#oS').checked && !$('#oS').disabled;
+  const querR = $('#oR') && $('#oR').checked && !$('#oR').disabled;
   $('#log').innerHTML = ''; try{ localStorage.removeItem('osino.log.' + chave()); }catch(e){}
-  if(!querC && !querS){ log('Nada marcado para publicar: carrossel e story já publicados ou desmarcados.', 'err'); return; }
+  if(!querC && !querS && !querR){ log('Nada marcado para publicar: tudo já publicado ou desmarcado.', 'err'); return; }
   if(!conta.id){ log('Erro: conta sem ID Instagram. Abra Conta e salve o token de novo.', 'err'); return; }
   b.disabled = true; log('Iniciando publicação…');
   const todos = pubs(); const k = chave(); const p = todos[k] || {}; todos[k] = p;
@@ -277,6 +281,17 @@ async function publicar(){
       try{ p.link = (await call('GET', '/' + pub.id, {fields: 'permalink'})).permalink; }catch(e){}
       LS.set('pub', todos);
       log('Carrossel publicado', 'ok');
+    }
+    if(querR){
+      log('Reels: enviando');
+      const c = (await call('POST', `/${ig}/media`, {media_type: 'REELS', video_url: ed.r, caption: legenda, share_to_feed: 'true', thumb_offset: '1000'})).id;
+      log('Reels: processando');
+      await pronto(c, 150);
+      const pub = await call('POST', `/${ig}/media_publish`, {creation_id: c});
+      p.reels = pub.id; p.reelsEm = hora(); p.legenda = legenda;
+      try{ p.linkR = (await call('GET', '/' + pub.id, {fields: 'permalink'})).permalink; }catch(e){}
+      LS.set('pub', todos);
+      log('Reels publicado', 'ok');
     }
     if(querS){
       log('Story: enviando');

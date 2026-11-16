@@ -25,9 +25,9 @@ jobs:
         env:
           NTFY_TOPIC: ${{ secrets.NTFY_TOPIC }}
       - run: |
-          git diff --quiet editions.json && exit 0
+          git add -A editions.json midia 2>/dev/null || git add editions.json
+          git diff --cached --quiet && exit 0
           git config user.name "github-actions[bot]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
-          git add editions.json
           git commit -m "Edições"
           git push
