@@ -3,6 +3,10 @@ name: Edições
 on:
   schedule:
     - cron: '*/10 * * * *'
+    - cron: '7,17,27,37,47,57 9,10 * * *'
+    - cron: '3,13,23,33,43,53 15 * * 1-5'
+    - cron: '13,23,33,43,53 22 * * 1-5'
+    - cron: '7,27,47 21,22 * * 0'
   workflow_dispatch:
 
 permissions:
