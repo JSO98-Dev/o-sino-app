@@ -2,6 +2,58 @@
  "edicoes": [
   {
    "v": 1,
+   "d": "2026-11-16",
+   "t": "diario",
+   "n": 53,
+   "s": [
+    "https://lh3.googleusercontent.com/d/1iznBpOovwUYa1jEifa1ANwpThr7vMAlj",
+    "https://lh3.googleusercontent.com/d/11PDZ_Rs63Pw1EvACkg-wT0iBHXGq-LxZ",
+    "https://lh3.googleusercontent.com/d/1xTCDqRTlUcwTAUYcEElMmItK9wQnHHTD",
+    "https://lh3.googleusercontent.com/d/1XjmX4m9X-VAcGX106RWvrdiGrVQWOhT1",
+    "https://lh3.googleusercontent.com/d/1yeHBOvGLGB0uEOdYpjXWKGR6UIH5h709",
+    "https://lh3.googleusercontent.com/d/1Omyb35WvDl4CrKQfnuzuBCvQ7fKjOsHK",
+    "https://lh3.googleusercontent.com/d/1bzdT8mJZ-0zz9Dy7bZzvDhnrpIVLMhtT",
+    "https://lh3.googleusercontent.com/d/1TtOD1WdHHVmVeIVJZCvdc4pQMpyoX-zH"
+   ],
+   "st": "https://lh3.googleusercontent.com/d/1a8de66DlEnR8hBklsmje9Dkt3KvH5eWX",
+   "l": "Irã ataca base dos EUA no Bahrein com drones\nChina desacelera em outubro: indústria +4,8% e varejo +0,4%, abaixo do consenso.\nBessent pede CEO de fora na Nvidia; futuro do Nasdaq 100 cai 1,3% e Nikkei −2,25%.\nAlckmin defende pacote fiscal; Senado vota destaques na terça.\nMercados, manchetes, análise e agenda no carrossel.\n#mercadofinanceiro #ibovespa #economia #dolar #investimentos\n",
+   "m": "Irã ataca base dos EUA no Bahrein com drones",
+   "criado": "2026-11-16T06:27:00-03:00"
+  },
+  {
+   "v": 1,
+   "d": "2026-11-16",
+   "t": "manchete",
+   "k": "m1",
+   "o": "diario",
+   "a": "Internacional",
+   "n": 53,
+   "s": [
+    "https://lh3.googleusercontent.com/d/14QlkvRs8VGEeDHN0v6jmxwZdko4Vsfnf"
+   ],
+   "st": "",
+   "l": "Irã ataca base dos EUA no Bahrein com drones\nSeis drones miraram o radar da base Al-Riffa na madrugada de domingo; o Bahrein diz ter interceptado e não há vítimas relatadas.\nBrent a US$ 96,28 (+0,46%) às 03h21 desta segunda.\nEdição completa disponível no feed.\n#mercadofinanceiro #internacional\n",
+   "m": "Irã ataca base dos EUA no Bahrein com drones",
+   "criado": "2026-11-16T06:22:00-03:00"
+  },
+  {
+   "v": 1,
+   "d": "2026-11-16",
+   "t": "manchete",
+   "k": "m2",
+   "o": "diario",
+   "a": "Mercados",
+   "n": 53,
+   "s": [
+    "https://lh3.googleusercontent.com/d/1qrFzKACOr-K_Qjvq_Rbhq4tXoRK4WCOK"
+   ],
+   "st": "",
+   "l": "Nvidia: Bessent quer CEO de fora; Huang avalia volta\nSecretário do Tesouro dá 10 dias para respostas sobre chips desviados à China; balanço sai na terça (17/11).\nFuturo do Nasdaq 100 recua 1,3% na madrugada.\nEdição completa disponível no feed.\n#mercadofinanceiro #mercados\n",
+   "m": "Nvidia: Bessent quer CEO de fora; Huang avalia volta",
+   "criado": "2026-11-16T06:22:00-03:00"
+  },
+  {
+   "v": 1,
    "d": "2026-11-15",
    "t": "domingo",
    "n": 6,
@@ -95,6 +147,9 @@
   "1HNx8IShELwtP-IyG6WqkgNCcF95WuQ3C",
   "1HYVnbo7BtrTHxZ1-qeaphX5KqgO3GhBq",
   "1IXVCtgcrL5isQNjrI8No1WF26Vewlk2V",
+  "1V9Ya3dhH0nHnegEvlyNvG7D0fgRxz2ah",
+  "1WTy6dOu-90X3n7bKHXkCk84JafJt1sPx",
+  "1eGlmHegyCUJ0gRpqhdqX9FrU7RNO0bAe",
   "1qsq7dDn2wynB5bVRX7aT1YhMilU85b-t"
  ]
 }
