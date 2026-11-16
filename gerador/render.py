@@ -4,7 +4,7 @@ Edição diária: placar com var_dia. Edição de domingo: placar com var_semana
 Cards com "manchete": true também viram posts avulsos manchete-N.png (etiqueta "assunto", "destaque" {valor, rotulo, dir} e "serie" opcional).
 Versão 4: identidade visual O Sino (logotipo desenhado, régua de 8 px, margem de 72 px, variação com ícone,
 faixa de domingo, slide de fontes, story próprio). Imprime "AVISO:" quando um slide precisou encolher ou ainda não coube."""
-import json, sys, html, pathlib, datetime as dt
+import json, sys, html, pathlib, datetime as dt, hashlib, urllib.request
 import re as _re
 from playwright.sync_api import sync_playwright
 
@@ -74,6 +74,8 @@ body{background:var(--papel);color:var(--tinta);font-family:'Newsreader',serif;-
 .kick{font-size:22px;letter-spacing:.14em;margin-top:40px}
 h1{font-weight:600;font-size:76px;line-height:80px;letter-spacing:-.01em;margin-top:16px}
 .story h1{font-size:104px;line-height:108px}
+.story .foto~div{margin-top:24px !important}.story:has(.foto) h1{font-size:84px;line-height:90px}
+.story:has(.foto) .srow .val{font-size:60px}.story:has(.foto) .srow{padding:10px 0}
 h2{font-weight:600;font-size:56px;line-height:62px;letter-spacing:-.005em}
 h2.f{font-size:60px;line-height:66px;margin-top:14px}
 .tit{display:flex;justify-content:space-between;align-items:baseline;gap:24px;padding:32px 0 22px;flex:none}
@@ -150,6 +152,10 @@ td .v{font-size:24px}
 .tcurto{display:grid;grid-template-columns:auto 1fr;gap:20px;align-items:center;margin-top:22px;flex:none}
 .tcurto .scale div{padding:9px 0;font-size:19px}
 .mch .big3{margin-top:22px}
+.foto{margin-top:30px;background-size:cover;background-position:center 60%;position:relative;overflow:hidden}
+.sob{position:absolute;left:0;bottom:0;background:rgba(21,20,19,.86);padding:16px 26px 14px;display:flex;flex-direction:column;gap:2px}
+.sob .num{display:flex;align-items:center;gap:6px;font-family:'Plex Cond';font-weight:600;line-height:1;color:var(--papel)}
+.upc{color:#7FD3A1 !important}.downc{color:#FF8A7E !important}.flatc{color:var(--papel)}
 .dq{display:flex;align-items:baseline;gap:18px;margin-top:22px}
 .dq .num{display:flex;align-items:center;gap:6px;font-family:'Plex Cond';font-weight:600;font-size:84px;line-height:1}
 .painel .icone{display:flex;justify-content:center;padding:26px 0 10px}
@@ -245,9 +251,10 @@ def termo_curto(ed):
 
 
 def capa(ed, foco, n):
-    vis = visual(foco, num=150, sh=110, ico=190)
+    q = quadro(ed, foco, num=104)
+    vis = q or f'<div class="painel" style="margin-top:auto">{visual(foco, num=150, sh=110, ico=190)}</div>'
     return (f'<section class="s mch">{mast(ed)}<div class="body"><span class="r tag" style="margin-top:30px">{e(assunto(foco))}</span><h1>{e(foco["titulo"])}</h1>'
-            f'<p class="dek">{e(foco["dado"])}</p><div class="painel" style="margin-top:auto">{vis}</div>{termo_curto(ed)}{big3(ed)}</div>{foot(1, n)}</section>')
+            f'<p class="dek">{e(foco["dado"])}</p>{vis}{termo_curto(ed)}{big3(ed)}</div>{foot(1, n)}</section>')
 
 
 def story(ed, foco):
@@ -258,7 +265,8 @@ def story(ed, foco):
     ag = "".join(f'<div class="row{" dom" if DOM else ""}" style="grid-template-columns:{250 if DOM else 150}px 1fr"><span class="m h" style="font-size:30px">{e((a.get("dia", "") + " " + a["hora"]).strip())}</span>'
                  f'<span class="t" style="font-size:32px;line-height:42px">{e(a["evento"])}</span></div>' for a in ed["agenda"][:3])
     kick = '<div class="r kick" style="font-size:26px">A semana em dois minutos</div>' if DOM else f'<div class="r kick vm" style="font-size:26px">{ {"meiodia": "No meio do pregão", "fechamento": "Depois do sino"}.get(ED, "Antes do sino")}</div>'
-    return (f'<section class="s story">{mast(ed, story=True)}<div class="body">{kick}<h1>{e(foco["titulo"])}</h1>'
+    q = quadro(ed, foco, num=80, minh=330) or ""
+    return (f'<section class="s story">{mast(ed, story=True)}<div class="body">{kick}<h1>{e(foco["titulo"])}</h1>{q}'
             f'<div style="margin-top:36px;border-bottom:1px solid var(--linha)">{rows}</div>'
             f'<div style="margin-top:36px"><div style="display:flex;align-items:center;gap:14px;padding-bottom:12px">{ic("relogio", 30)}'
             f'<span class="r" style="font-size:26px">{"Semana que vem" if DOM else "Amanhã" if ED == "fechamento" else "Agenda"}</span></div><div class="rows">{ag}</div></div>'
@@ -275,6 +283,80 @@ def spark(serie, cor, h=170):
     x, y = pts[-1]
     return (f'<svg viewBox="0 0 {w} {h}" width="{w}" height="{h}" style="display:block;margin-top:14px"><polyline points="{lin}" fill="none" '
             f'stroke="var(--{cor})" stroke-width="5" stroke-linejoin="round" stroke-linecap="round"/><circle cx="{x:.1f}" cy="{y:.1f}" r="10" fill="var(--{cor})"/></svg>')
+
+
+FOTOS = pathlib.Path(__file__).parent / "fotos"
+RAW_FOTOS = "https://raw.githubusercontent.com/JSO98-Dev/o-sino-app/main/gerador/fotos/"
+PALAVRAS = [
+    ("petroleo", r"petr[óo]leo|brent|\bwti\b|opep|ormuz|petrobras"),
+    ("ouro", r"\bouro\b"),
+    ("boi", r"\bboi\b|pecu[áa]ria|arroba|carne bovina"),
+    ("graos", r"\bsoja\b|\bmilho\b|safra|gr[ãa]os|\btrigo\b|\bcaf[ée]\b"),
+    ("china", r"\bchina\b|chin[êe]s|pequim|xangai"),
+    ("capitolio", r"\bfed\b|treasury|\beua\b|trump|washington|casa branca|powell"),
+    ("porto", r"tarifa|exporta|importa|com[ée]rcio exterior|\bfrete\b|navio"),
+    ("congresso", r"senado|c[âa]mara|congresso|\bstf\b|governo|\blula\b|minist|planalto|fiscal|reforma|\bplp\b|\bpec\b"),
+    ("dinheiro", r"d[óo]lar|c[âa]mbio|\breal\b|infla[çc][ãa]o|\bipca\b|juros|selic|copom|banco central"),
+    ("bolsa", r"ibovespa|\bbolsa\b|a[çc][õo]es|\bb3\b|nasdaq|s&p|balan[çc]o|lucro"),
+    ("saopaulo", r"varejo|emprego|\bpib\b|ind[úu]stria|imobili"),
+]
+PADRAO = {"ECONOMIA": "dinheiro", "POLÍTICA": "congresso", "AGRO": "graos", "INTERNACIONAL": "porto",
+          "ANÁLISE": "jornal", "MERCADOS": "bolsa"}
+_CAT = None
+
+
+def catalogo():
+    global _CAT
+    if _CAT is None:
+        try:
+            _CAT = json.load(open(FOTOS / "catalogo.json"))
+        except Exception:
+            try:
+                _CAT = json.loads(urllib.request.urlopen(RAW_FOTOS + "catalogo.json", timeout=20).read())
+            except Exception:
+                _CAT = {}
+    return _CAT
+
+
+def foto(ed, c):
+    """Caminho local de uma foto do banco para o card (campo "foto" ou palavras-chave ou assunto); None se não houver."""
+    cat = catalogo()
+    if not cat:
+        return None
+    k = c.get("foto") if c.get("foto") in cat else None
+    if not k:
+        for txt in (c.get("titulo", ""), c.get("dado", "")):
+            k = next((k for k, rx in PALAVRAS if k in cat and _re.search(rx, txt.lower())), None)
+            if k:
+                break
+    k = k or PADRAO.get(assunto(c), "bolsa")
+    lst = cat.get(k) or cat.get("bolsa") or []
+    if not lst:
+        return None
+    nome = lst[int(hashlib.md5((ed["data"] + c.get("titulo", "")).encode()).hexdigest(), 16) % len(lst)]
+    f = FOTOS / nome
+    if not f.exists():
+        try:
+            FOTOS.mkdir(exist_ok=True)
+            f.write_bytes(urllib.request.urlopen(RAW_FOTOS + nome, timeout=30).read())
+        except Exception:
+            return None
+    return f
+
+
+def quadro(ed, c, h=None, num=118, minh=240):
+    """Foto do assunto com o número em destaque sobreposto; cai para visual() sem foto."""
+    f = foto(ed, c)
+    if not f:
+        return None
+    d = c.get("destaque") or {}
+    sob = ""
+    if d.get("valor"):
+        k = {"↑": "up", "↓": "down", "→": "flat"}.get(d.get("dir"), sinal(d["valor"]))
+        sob = (f'<div class="sob"><span class="r" style="font-size:22px;color:var(--papel)">{e(d.get("rotulo", ""))}</span>'
+               f'<div class="num {k}c" style="font-size:{num}px">{ic(k, round(num * .78), sw=2.8)}{e(d["valor"])}</div></div>')
+    alt = f"height:{h}px;flex:none" if h else f"flex:1 1 0;min-height:{minh}px"
+    return f'<div class="foto" style="{alt};background-image:url(\'file://{f}\')">{sob}</div>'
 
 
 def assunto(c):
@@ -295,12 +377,13 @@ def visual(c, num=184, sh=170, ico=260):
 
 def manchete(ed, c):
     a = assunto(c)
-    vis = visual(c)
+    q = quadro(ed, c, num=150)
+    vis = q or f'<div class="painel">{visual(c)}</div>'
     txt, _ = data_ext(ed["data"])
     nota = "Edição completa disponível no feed"
     return (f'<section class="s mch"><div class="regua"></div><div class="mini">{A2}<span class="r" style="font-size:18px">{hora_ed()} · {txt}</span></div><div class="fil"></div>'
             f'<div class="body"><span class="r tag">{e(a)}</span><h1>{e(c["titulo"])}</h1><p class="dek">{e(c["dado"])}</p>'
-            f'<div class="painel">{vis}</div></div>'
+            f'{vis}</div>'
             f'<div class="foot"><span class="r" style="font-size:20px;letter-spacing:.08em">{e(PERFIL)}</span><i>{e(nota)}</i></div></section>')
 
 
