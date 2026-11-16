@@ -1,0 +1,24 @@
+name: Fotos
+
+on:
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  fotos:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+      - run: pip install pillow
+      - run: python3 gerador/baixar_fotos.py
+      - run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git pull -q --rebase origin main
+          git add gerador/fotos
+          git diff --cached --quiet && exit 0
+          git commit -m "Fotos"
+          git push
