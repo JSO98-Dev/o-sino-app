@@ -61,12 +61,19 @@ body.conta #ed{display:none}
 .lista .pend{color:var(--vermelho)}
 .lista .feito{color:var(--alta)}
 .meta .lnk{padding:0;font-size:13px;color:var(--cinza)}
+.nav{display:flex;gap:18px}
+#num{display:none}
+body.num #num{display:block}
+body.num #ed,body.num #conta{display:none}
+.lista a{display:block;color:inherit;text-decoration:none}
+.lista .l3{font:400 12px/1.5 var(--mono);color:var(--cinza);margin-top:6px}
+.lista .l3 b{color:var(--tinta);font-weight:500}
 </style>
 </head>
 <body>
 <header>
   <h1>O Sino<b>.</b></h1>
-  <button class="lnk" id="bConta">Conta</button>
+  <div class="nav"><button class="lnk" id="bNum">Números</button><button class="lnk" id="bConta">Conta</button></div>
 </header>
 
 <main id="ed"></main>
@@ -83,6 +90,15 @@ body.conta #ed{display:none}
   <div id="cLog" class="info"></div>
 </section>
 
+<section id="num">
+  <div class="meta"><span>Números</span><button class="lnk" id="bAtual">Atualizar</button></div>
+  <div class="info" id="nInfo"></div>
+  <h2>Média por formato</h2>
+  <ul class="lista" id="nMedia"></ul>
+  <h2>Posts</h2>
+  <ul class="lista" id="nLista"></ul>
+</section>
+
 <script>
 const APP_URL = 'https://claude.ai/artifact/QourToBCprB37i8vXRJKwH';
 const API_IG = 'https://graph.instagram.com';
@@ -94,7 +110,7 @@ const LS = {
   get(k){ try{ return JSON.parse(localStorage.getItem('osino.'+k)); }catch(e){ return null; } },
   set(k,v){ try{ localStorage.setItem('osino.'+k, JSON.stringify(v)); }catch(e){} }
 };
-const VER = '8';
+const VER = '9';
 const FEED = 'https://raw.githubusercontent.com/JSO98-Dev/o-sino-app/main/editions.json';
 const sleep = ms => new Promise(r => setTimeout(r, ms));
 const esc = s => String(s).replace(/[&<>"]/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
@@ -283,6 +299,7 @@ window.addEventListener('unhandledrejection', e => log('Erro inesperado: ' + (e.
 window.addEventListener('error', e => log('Erro de script: ' + e.message, 'err'));
 
 function abrirConta(){
+  fecharNum();
   document.body.classList.add('conta');
   $('#bConta').textContent = 'Voltar';
   mostrarConta();
@@ -307,6 +324,76 @@ function mostrarConta(){
   }
 }
 
+const n0 = v => v == null ? '—' : Number(v).toLocaleString('pt-BR', {maximumFractionDigits: 1});
+const FORMATO = {CAROUSEL_ALBUM: 'Carrossel', IMAGE: 'Post', VIDEO: 'Reels'};
+const linhaNum = m => `<b>${n0(m.reach)}</b> alcance · <b>${n0(m.saved)}</b> salvos · <b>${n0(m.shares)}</b> compart. · <b>${n0(m.like_count)}</b> curtidas · <b>${n0(m.comments_count)}</b> coment.`;
+function abrirNum(){
+  fecharConta();
+  document.body.classList.add('num');
+  $('#bNum').textContent = 'Voltar';
+  mostrarNum(LS.get('num'));
+  numeros();
+}
+function fecharNum(){
+  document.body.classList.remove('num');
+  $('#bNum').textContent = 'Números';
+}
+async function insights(m){
+  for(const metric of ['reach,saved,shares', 'reach,saved', 'reach']){
+    try{
+      const j = await call('GET', '/' + m.id + '/insights', {metric});
+      for(const x of j.data || []) m[x.name] = x.values && x.values.length ? x.values[0].value : (x.total_value ? x.total_value.value : null);
+      return true;
+    }catch(e){}
+  }
+  return false;
+}
+async function numeros(){
+  if(!conta || !conta.token || !conta.id){ $('#nInfo').textContent = 'Sem token'; return; }
+  $('#nInfo').textContent = 'Carregando…';
+  try{
+    const perfil = await call('GET', '/' + conta.id, {fields: 'followers_count,media_count'});
+    const md = await call('GET', '/' + conta.id + '/media', {fields: 'id,caption,media_type,timestamp,permalink,like_count,comments_count', limit: '25'});
+    const itens = md.data || [];
+    let semIns = false;
+    for(let i = 0; i < itens.length; i += 5){
+      const r = await Promise.all(itens.slice(i, i + 5).map(insights));
+      if(r.includes(false)) semIns = true;
+    }
+    const d = {em: Date.now(), seg: perfil.followers_count, posts: perfil.media_count, itens, semIns};
+    LS.set('num', d);
+    mostrarNum(d);
+  }catch(err){
+    $('#nInfo').innerHTML = `<span class="alerta">${esc(err.message)}</span>`;
+  }
+}
+function mostrarNum(d){
+  if(!d){ $('#nMedia').innerHTML = ''; $('#nLista').innerHTML = ''; return; }
+  $('#nInfo').innerHTML = `Seguidores ${n0(d.seg)} · Posts ${n0(d.posts)}<br>${new Date(d.em).toLocaleString('pt-BR', {dateStyle: 'short', timeStyle: 'short'})}`
+    + (d.semIns ? '<br><span class="alerta">Token sem permissão de métricas</span>' : '');
+  const g = {};
+  for(const m of d.itens){
+    const f = FORMATO[m.media_type] || m.media_type;
+    const a = g[f] = g[f] || {n: 0, s: {}, c: {}};
+    a.n++;
+    for(const k of ['reach', 'saved', 'shares', 'like_count', 'comments_count']) if(m[k] != null){ a.s[k] = (a.s[k] || 0) + m[k]; a.c[k] = (a.c[k] || 0) + 1; }
+  }
+  $('#nMedia').innerHTML = Object.entries(g).map(([f, a]) => {
+    const med = {};
+    for(const k in a.s) med[k] = a.s[k] / a.c[k];
+    return `<li><div class="l1"><span>${esc(f)}</span><span>${a.n} posts</span></div><div class="l3">${linhaNum(med)}</div></li>`;
+  }).join('');
+  $('#nLista').innerHTML = d.itens.map(m => {
+    const dt = new Date(m.timestamp);
+    const tit = (m.caption || '').split('\n')[0];
+    return `<li><a href="${esc(m.permalink || '#')}" target="_blank" rel="noopener">
+      <div class="l1"><span>${DIAS[dt.getDay()]} ${dt.toLocaleString('pt-BR', {day: '2-digit', month: '2-digit', hour: '2-digit', minute: '2-digit'})}</span><span>${esc(FORMATO[m.media_type] || m.media_type)}</span></div>
+      ${tit ? `<div class="l2">${esc(tit)}</div>` : ''}
+      <div class="l3">${linhaNum(m)}</div></a></li>`;
+  }).join('');
+}
+$('#bNum').addEventListener('click', () => document.body.classList.contains('num') ? fecharNum() : abrirNum());
+$('#bAtual').addEventListener('click', numeros);
 $('#bConta').addEventListener('click', () => document.body.classList.contains('conta') ? fecharConta() : abrirConta());
 $('#bSalvar').addEventListener('click', async () => {
   const t = $('#cToken').value.trim(); if(!t) return;
