@@ -3,6 +3,33 @@
   {
    "v": 1,
    "d": "2026-11-16",
+   "t": "fechamento",
+   "n": 53,
+   "s": [],
+   "st": "https://lh3.googleusercontent.com/d/1XGaepdquTgm4c3CBm5qRFZt_iRKuAd_u",
+   "l": "",
+   "m": "Dólar sobe 2,15% e fecha a R$ 5,77 com risco fiscal",
+   "criado": "2026-11-16T19:12:26-03:00"
+  },
+  {
+   "v": 1,
+   "d": "2026-11-16",
+   "t": "manchete",
+   "k": "m4",
+   "o": "fechamento",
+   "a": "Economia",
+   "n": 53,
+   "s": [
+    "https://lh3.googleusercontent.com/d/1aYE999SQY_VBLlk5zmyX61piEwyQoDqV"
+   ],
+   "st": "",
+   "l": "Dólar sobe 2,15% e fecha a R$ 5,77 com risco fiscal\nO dólar subiu 2,15% e fechou a R$ 5,77, maior nível desde abril de 2025. O DI Jan/28 foi a 14,495% e o Ibovespa caiu 1,83%, a 169.295 pontos.\nEdição completa disponível no feed.\n#mercadofinanceiro #economia",
+   "m": "Dólar sobe 2,15% e fecha a R$ 5,77 com risco fiscal",
+   "criado": "2026-11-16T19:12:26-03:00"
+  },
+  {
+   "v": 1,
+   "d": "2026-11-16",
    "t": "meiodia",
    "n": 53,
    "s": [],
@@ -176,6 +203,8 @@
   "1IXVCtgcrL5isQNjrI8No1WF26Vewlk2V",
   "1V9Ya3dhH0nHnegEvlyNvG7D0fgRxz2ah",
   "1WTy6dOu-90X3n7bKHXkCk84JafJt1sPx",
+  "1Z1JFERjLdHuOFnY8RONnWY0_kjkn5zGP",
+  "1Zhfq0ekJs2JD7WxFZzEuwhjWjcNa188x",
   "1eGlmHegyCUJ0gRpqhdqX9FrU7RNO0bAe",
   "1qsq7dDn2wynB5bVRX7aT1YhMilU85b-t",
   "1rQq-cOEYzQriQfLP3lQyVSunCBIHHYlO",
