@@ -288,7 +288,7 @@ def spark(serie, cor, h=170):
 FOTOS = pathlib.Path(__file__).parent / "fotos"
 RAW_FOTOS = "https://raw.githubusercontent.com/JSO98-Dev/o-sino-app/main/gerador/fotos/"
 PALAVRAS = [
-    ("petroleo", r"petr[óo]leo|brent|\bwti\b|opep|ormuz|petrobras"),
+    ("petroleo", r"petr[óo]leo|brent|\bwti\b|opep|ormuz|petrobras|\bir[ãa]\b|iranian[oa]s?|golfo|bahrein|israel|oriente m[ée]dio|houthi"),
     ("ouro", r"\bouro\b"),
     ("boi", r"\bboi\b|pecu[áa]ria|arroba|carne bovina"),
     ("graos", r"\bsoja\b|\bmilho\b|safra|gr[ãa]os|\btrigo\b|\bcaf[ée]\b"),
