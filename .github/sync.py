@@ -98,12 +98,13 @@ for fid, nome in arquivos:
         print('ignorado', nome, err)
         continue
     k = chave(e)
-    if e.get('rid'):
-        try:
-            e['r'] = video(e.pop('rid'), k + '.mp4')
-        except Exception as err:
-            print('vídeo falhou', nome, err)
-            continue
+    try:
+        for campo, dest, suf in (('rid', 'r', ''), ('sid', 'sv', '-story')):
+            if e.get(campo):
+                e[dest] = video(e.pop(campo), k + suf + '.mp4')
+    except Exception as err:
+        print('vídeo falhou', nome, err)
+        continue
     atual = edicoes.get(k)
     if not atual or (e.get('criado') or '') >= (atual.get('criado') or ''):
         edicoes[k] = e

@@ -114,7 +114,7 @@ const LS = {
   get(k){ try{ return JSON.parse(localStorage.getItem('osino.'+k)); }catch(e){ return null; } },
   set(k,v){ try{ localStorage.setItem('osino.'+k, JSON.stringify(v)); }catch(e){} }
 };
-const VER = '11';
+const VER = '12';
 const FEED = 'https://raw.githubusercontent.com/JSO98-Dev/o-sino-app/main/editions.json';
 const sleep = ms => new Promise(r => setTimeout(r, ms));
 const esc = s => String(s).replace(/[&<>"]/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
@@ -213,7 +213,7 @@ function render(){
     ${ed.s.length ? `<h2>${ed.s.length > 1 ? 'Carrossel' : 'Post'} <span>${ed.s.length > 1 ? ed.s.length + ' slides' : ''}</span></h2>
     <div class="carr">${ed.s.map(u => `<img src="${esc(u)}" alt="" loading="lazy">`).join('')}</div>` : ''}
     ${ed.r ? `<h2>Reels</h2><div class="story"><video src="${esc(ed.r)}" controls playsinline muted preload="metadata"></video></div>` : ''}
-    ${ed.st ? `<h2>Story</h2><div class="story"><img src="${esc(ed.st)}" alt=""></div>` : ''}
+    ${ed.sv ? `<h2>Story</h2><div class="story"><video src="${esc(ed.sv)}" controls playsinline muted preload="metadata"></video></div>` : ed.st ? `<h2>Story</h2><div class="story"><img src="${esc(ed.st)}" alt=""></div>` : ''}
     ${ed.s.length || ed.r ? `<h2>Legenda <span id="cont"></span></h2>
     <textarea id="leg" spellcheck="true">${esc(p.legenda || ed.l || '')}</textarea>` : ''}
     <div id="pubBox"></div>
@@ -299,8 +299,9 @@ async function publicar(){
     }
     if(querS){
       log('Story: enviando');
-      const c = (await call('POST', `/${ig}/media`, {media_type: 'STORIES', image_url: ed.st})).id;
-      await pronto(c);
+      const c = (await call('POST', `/${ig}/media`, ed.sv ? {media_type: 'STORIES', video_url: ed.sv} : {media_type: 'STORIES', image_url: ed.st})).id;
+      if(ed.sv) log('Story: processando');
+      await pronto(c, ed.sv ? 150 : 45);
       const pub = await call('POST', `/${ig}/media_publish`, {creation_id: c});
       p.story = pub.id; p.storyEm = hora();
       LS.set('pub', todos);
