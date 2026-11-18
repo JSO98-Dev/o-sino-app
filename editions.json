@@ -2,6 +2,27 @@
  "edicoes": [
   {
    "v": 1,
+   "d": "2026-11-18",
+   "t": "diario",
+   "n": 55,
+   "s": [
+    "https://lh3.googleusercontent.com/d/1HnhO2HI5qVXUw_wqpaDU1wHnc2KI6Iab",
+    "https://lh3.googleusercontent.com/d/1H872SUwofK_cg2sSp77E0Oq7FnBDX405",
+    "https://lh3.googleusercontent.com/d/1kQNgBSl3gSl2BdXbnFgZouX-61TwVpQm",
+    "https://lh3.googleusercontent.com/d/1W5sYRnK6rqeRYO5s_8B4f6jrBIk1UsHU",
+    "https://lh3.googleusercontent.com/d/1Mhi8h1CncJY0H1PduHBGOnKW0OodK01X",
+    "https://lh3.googleusercontent.com/d/1rsD_4a1kFO-5Xg7C14oMnLqHuN6zFJy0",
+    "https://lh3.googleusercontent.com/d/15FWIuld0kFITi_9q4IMvmU8HlGqkejRq",
+    "https://lh3.googleusercontent.com/d/1WQb9pDRKI3TOMjhuY3TFZjYR7LUnrhxt"
+   ],
+   "st": "https://lh3.googleusercontent.com/d/1IAfsPhVsxkeUMA0sZQIsD4vYfsUfB9Lp",
+   "l": "Nvidia supera previsão e projeta US$ 130 bi\n\nNvidia fatura US$ 115,8 bi no trimestre, acima dos US$ 109 bi esperados; ação sobe 4,8% após o fechamento.\nSenado adia para hoje, 16h, os 4 destaques do ajuste fiscal; dólar fecha a R$ 5,78.\nAta do Fed sai às 16h, com alta de juros nos EUA em dezembro já no preço.\n\nPara você: com o dólar perto de R$ 5,78 e o DI de 2028 em 14,40%, o resultado no Senado define o rumo dos juros do Tesouro prefixado e do custo do crédito.\n\nMercados, manchetes, análise e agenda no carrossel.\nSalve para consultar e mande para quem investe.\n\n#mercadofinanceiro #ibovespa #economia #dolar #investimentos\n",
+   "m": "Nvidia supera previsão e projeta US$ 130 bi",
+   "criado": "2026-11-18T05:29:35-03:00",
+   "sv": "https://jso98-dev.github.io/o-sino-app/midia/2026-11-18-story.mp4"
+  },
+  {
+   "v": 1,
    "d": "2026-11-17",
    "t": "fechamento",
    "n": 54,
@@ -242,6 +263,7 @@
  "vistos": [
   "14BOlqwpASCaAykKDG2GVw7F6n3UdBoyA",
   "15AzoplOWtNwBcg4rYlrSSbNb1VSKxhLk",
+  "1DvmSND3jnC8JmTpf_mDuvQ9oekKL6xcP",
   "1FMLeJP6h2eiSNjEtG5IKtha5V7DYRZnR",
   "1HNx8IShELwtP-IyG6WqkgNCcF95WuQ3C",
   "1HYVnbo7BtrTHxZ1-qeaphX5KqgO3GhBq",
