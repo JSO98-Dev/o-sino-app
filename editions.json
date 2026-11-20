@@ -2,6 +2,27 @@
  "edicoes": [
   {
    "v": 1,
+   "d": "2026-11-20",
+   "t": "diario",
+   "n": 57,
+   "s": [
+    "https://lh3.googleusercontent.com/d/1QOmTcMpi8vnDv9IwTGm7_8ap4Qu7DIsm",
+    "https://lh3.googleusercontent.com/d/1t6oPYRa44DzuSKWDA62NwtpPHRbxRUct",
+    "https://lh3.googleusercontent.com/d/1TcHCnCWUCUszljHXYo7w96YPnNog6VhV",
+    "https://lh3.googleusercontent.com/d/1-ZZqqjfLPNE-EGDKXt0sz8cv08LAQ3mo",
+    "https://lh3.googleusercontent.com/d/1WnL4lRRluR1tnh9WK1XsHjWhPScgae6k",
+    "https://lh3.googleusercontent.com/d/1bysPRRNeKxBNE4w16xqTVBmSk89GS11L",
+    "https://lh3.googleusercontent.com/d/1uRizdMRxGV58QsxxtV0r4CXoQ1AvTt-4",
+    "https://lh3.googleusercontent.com/d/1rywLweClHZUHcBfszErfai9Zk6UP2TPb"
+   ],
+   "st": "https://lh3.googleusercontent.com/d/1hmXKyxnERxfFObHN-k43lZrR3Gi_Dvut",
+   "l": "Dólar a R$ 5,93 e B3 fechada no feriado\n\nDólar sobe 1,10%, maior fechamento desde abril de 2025, mesmo com leilão de US$ 1 bi do BC.\nAnthropic sobe 17% na estreia, mas S&P 500 cai 2,02% e a Ásia desaba até 5%.\nOuro cai 2,7%, a US$ 3.525, e caminha para a pior semana em oito meses.\n\nPara você: dólar mais caro pressiona importados e viagens, e juros futuros em alta encarecem crédito e elevam as taxas do Tesouro prefixado.\n\nMercados, manchetes, análise e agenda no carrossel.\nSalve para consultar e mande para quem investe.\n\n#mercadofinanceiro #ibovespa #economia #dolar #investimentos\n",
+   "m": "Dólar a R$ 5,93 e B3 fechada no feriado",
+   "criado": "2026-11-20T06:12:00-03:00",
+   "sv": "https://jso98-dev.github.io/o-sino-app/midia/2026-11-20-story.mp4"
+  },
+  {
+   "v": 1,
    "d": "2026-11-19",
    "t": "fechamento",
    "n": 56,
@@ -351,6 +372,7 @@
   "1Zhfq0ekJs2JD7WxFZzEuwhjWjcNa188x",
   "1eGlmHegyCUJ0gRpqhdqX9FrU7RNO0bAe",
   "1j6Zd4dheXE-41aNW8ki3m-fuMKn1x8PL",
+  "1qUnl0U1T06ebIFXPywhBkJlg__WguHeF",
   "1qsq7dDn2wynB5bVRX7aT1YhMilU85b-t",
   "1rQq-cOEYzQriQfLP3lQyVSunCBIHHYlO",
   "1sLA9hTX2dCdKi3wxexo7OC4h_Sux2G4S"
