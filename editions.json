@@ -2,6 +2,27 @@
  "edicoes": [
   {
    "v": 1,
+   "d": "2026-11-23",
+   "t": "diario",
+   "n": 60,
+   "s": [
+    "https://lh3.googleusercontent.com/d/1-9FOcuIAuyxSZJv4sTuLD4dtxpr96pRU",
+    "https://lh3.googleusercontent.com/d/1YdzFB8Ohrkk0M31bEEz33hdFJ9wEj6u5",
+    "https://lh3.googleusercontent.com/d/1SJt76dubl7-Z2suvDjcQBRPx_jrGYGbL",
+    "https://lh3.googleusercontent.com/d/158tKoSOE1o10z3Ajr3-9OYZsqzaLRp0D",
+    "https://lh3.googleusercontent.com/d/1ozM_5E4K3zmNaQyv95TKkYf9m0dCnx2m",
+    "https://lh3.googleusercontent.com/d/1eJ3Q3cO4WZCw_Xbct6t1VK-Ry2dtgWhv",
+    "https://lh3.googleusercontent.com/d/1HeM1PJVR3XJZxuj3Xb1V5RZr6bvOC48d",
+    "https://lh3.googleusercontent.com/d/1TFTGUYhc-Fm-7OtwvPMOTUOL7jfz8R1-"
+   ],
+   "st": "https://lh3.googleusercontent.com/d/1RgGlK0ALCBcnBebGeIuihFN7gfa-XShR",
+   "l": "Futuros de NY sobem 2% após a pior semana desde 2025\n\nNasdaq 100 futuro sobe 3,0% e S&P 500 futuro 2,1% na madrugada; B3 reabre após o feriado.\nCâmara vota hoje o ajuste fiscal sem mudanças no texto do Senado, com o dólar a R$ 5,934.\nTrump fala em retomar ataques ao Irã após o ano-novo se não houver acordo.\n\nPara você: o voto do ajuste mexe no dólar e nos juros futuros, o que pesa sobre o preço de importados, o crédito e as taxas do Tesouro prefixado.\n\nMercados, manchetes, análise e agenda no carrossel.\nSalve para consultar e mande para quem investe.\n\n#mercadofinanceiro #ibovespa #economia #dolar #investimentos",
+   "m": "Futuros de NY sobem 2% após a pior semana desde 2025",
+   "criado": "2026-11-23T06:10:18-03:00",
+   "sv": "https://jso98-dev.github.io/o-sino-app/midia/2026-11-23-story.mp4"
+  },
+  {
+   "v": 1,
    "d": "2026-11-22",
    "t": "domingo",
    "n": 7,
@@ -403,6 +424,7 @@
   "175rS1kO0EMtzHdkyN4w_nDWn9LkD0dey",
   "1770nmBfSZCEU22wBsq21CvhRp7hiQrLW",
   "17QVrqIpRhOw3DQ1N19FNQrj45jUnnOMN",
+  "18CGEOLHTVRKhfKxrBR7N8W2ho_2k8r5j",
   "1DvmSND3jnC8JmTpf_mDuvQ9oekKL6xcP",
   "1FMLeJP6h2eiSNjEtG5IKtha5V7DYRZnR",
   "1HNx8IShELwtP-IyG6WqkgNCcF95WuQ3C",
