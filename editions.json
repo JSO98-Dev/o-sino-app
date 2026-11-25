@@ -2,6 +2,27 @@
  "edicoes": [
   {
    "v": 1,
+   "d": "2026-11-25",
+   "t": "diario",
+   "n": 62,
+   "s": [
+    "https://lh3.googleusercontent.com/d/1c8nCxbPaVBijM8PBzchv0KkHiN9b3xo7",
+    "https://lh3.googleusercontent.com/d/1HI-r1Ev8_boBpyoDxeBOnS97JiNWvnrf",
+    "https://lh3.googleusercontent.com/d/18mxDzzQBfNYc_P_-RKAa5dNfFBGYvQKP",
+    "https://lh3.googleusercontent.com/d/11eDWVeFh-84FW87kg3KZlCYbbEvywKrr",
+    "https://lh3.googleusercontent.com/d/1XhaLAURnsImsYXBBmDDvS2cy-hEi7uen",
+    "https://lh3.googleusercontent.com/d/1wJlpHzGtLy5u6oQCY2pTNGgvwiZBuEn7",
+    "https://lh3.googleusercontent.com/d/1gjAiUL73wCoaJhu1HHllEglPUmkLhHyB",
+    "https://lh3.googleusercontent.com/d/1uItzUSIfbxmyBOjkUASbWbpO_shTXoMb"
+   ],
+   "st": "https://lh3.googleusercontent.com/d/1KoQ-bdamuMv12LgBy7REnPLhAJ0aex1b",
+   "l": "Venda em tecnologia volta e derruba futuros de NY\n\nNasdaq cai 1,48% e futuro do Nasdaq 100 recua 1,9% de madrugada; Nikkei fecha em −2,78%.\nIbovespa cai 0,43%, a 164.089 pts, menor fechamento desde janeiro; dólar recua a R$ 5,9107.\nPCE e PIB dos EUA às 10h30 testam a aposta de alta de juros do Fed em dezembro.\n\nPara você: a PEC de gastos derrubou os juros futuros, o que alivia as taxas do Tesouro prefixado e do crédito, mas um PCE forte hoje pode devolver a pressão sobre o dólar.\n\nMercados, manchetes, análise e agenda no carrossel.\nSalve para consultar e mande para quem investe.\n\n#mercadofinanceiro #ibovespa #economia #dolar #investimentos\n",
+   "m": "Venda em tecnologia volta e derruba futuros de NY",
+   "criado": "2026-11-25T06:13:07-03:00",
+   "sv": "https://jso98-dev.github.io/o-sino-app/midia/2026-11-25-story.mp4"
+  },
+  {
+   "v": 1,
    "d": "2026-11-24",
    "t": "fechamento",
    "n": 61,
@@ -491,6 +512,7 @@
  ],
  "vistos": [
   "11LIMcBvyuhCpkqnWFT0Co-_zVuxvas2-",
+  "12wrRXL3Edc4FQJcpKWfUMpTcuHqhrGJD",
   "14BOlqwpASCaAykKDG2GVw7F6n3UdBoyA",
   "15AzoplOWtNwBcg4rYlrSSbNb1VSKxhLk",
   "175rS1kO0EMtzHdkyN4w_nDWn9LkD0dey",
